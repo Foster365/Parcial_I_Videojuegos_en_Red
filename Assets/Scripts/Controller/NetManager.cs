@@ -54,7 +54,7 @@ public class NetManager : MonoBehaviourPunCallbacks
         options.IsVisible = true;
         //TODO setear nickname
 
-        Debug.Log("Room name:" + roomName.text);
+        Debug.Log("Room name:" + roomName.text.ToString());
 
         PhotonNetwork.JoinOrCreateRoom(roomName.text, options, TypedLobby.Default);
 
@@ -75,7 +75,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         connectionStatus.text = "Joined room";
-        PhotonNetwork.LoadLevel(roomName.text);
+        PhotonNetwork.LoadLevel("Level");
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
