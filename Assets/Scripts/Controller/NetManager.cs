@@ -75,7 +75,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         connectionStatus.text = "Joined room";
-        PhotonNetwork.LoadLevel("Level");
+        PhotonNetwork.LoadLevel("Game");
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
