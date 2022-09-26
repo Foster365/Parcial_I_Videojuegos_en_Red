@@ -3,28 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.UIElements;
+using System.Runtime.CompilerServices;
+using System;
 
 public class Instantiator : MonoBehaviourPun
 {
     [SerializeField] SpawnPoint[] playerSpawnPoints;
+    CharacterModel character;
 
-    void Awake()
+    public void HandlePlayerSpawning()
     {
-        if (!photonView.IsMine) Destroy(this);
+        //character = GameObject.FindObjectOfType<CharacterModel>();
+        //character = PhotonView.Find(PhotonNetwork.LocalPlayer.ActorNumber).gameObject.GetComponent<CharacterModel>();
         CheckSpawnPoints();
+
     }
 
     void CheckSpawnPoints()
     {
-        foreach (SpawnPoint sp in playerSpawnPoints)
+        SpawnPoint[] spawnPoints = FindObjectsOfType<SpawnPoint>();
+        if (spawnPoints.Length > 0)
         {
-            if (sp.IsAvaiable) SpawnPlayer(sp, sp.transform.position, Quaternion.identity);
+
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                Debug.Log("Is avaiable before spawning player? " + spawnPoints[i].IsAvaiable);
+                if (spawnPoints[i].IsAvaiable)
+                {
+                    spawnPoints[i].IsAvaiable = false;
+                    photonView.RPC("SpawnPlayer", RpcTarget.All, spawnPoints[i].transform.position, Quaternion.identity);
+                    Debug.Log("Player position: " + spawnPoints[i].transform.position);
+                    Debug.Log("Is avaiable after spawning player? " + spawnPoints[i].IsAvaiable);
+                    return;
+                }
+            }
         }
     }
 
-    void SpawnPlayer(SpawnPoint sp, Vector3 position, Quaternion rotation)
+    [PunRPC]
+    void SpawnPlayer(Vector3 position, Quaternion rotation)
     {
-        sp.IsAvaiable = false;
         PhotonNetwork.Instantiate("Character", position, rotation);
     }
 
