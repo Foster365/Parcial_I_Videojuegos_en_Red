@@ -15,7 +15,13 @@ public class NetManager : MonoBehaviourPunCallbacks
     [SerializeField] TextMeshProUGUI connectionStatus;
     [SerializeField] TextMeshProUGUI roomName;
     [SerializeField] TextMeshProUGUI characterNickName;
-
+    string[] genericNicknames = { "Menem", "Chinchulancha", "SinNombre" };
+    string genericNickName = "Puflito";
+    private void Awake()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true; //Esto hace que los jugadores cambien automáticamente a la misma escena
+        //Al utilizar PhotonNetwork.LoadScene();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +29,35 @@ public class NetManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
         btnConnection.interactable = false;
         connectionStatus.text = "Connecting to Master";
+        HandleNickname();
+    }
+    void HandleNickname()
+    {
+        Debug.Log("Dale forro estas entrando o no?");
+        string defaultNickName = string.Empty;
+        if (characterNickName != null)
+        {
+            if (PlayerPrefs.HasKey(genericNickName))
+            {
+                defaultNickName = PlayerPrefs.GetString(genericNickName);
+                characterNickName.text = defaultNickName;
+            }
+        }
+
+        //characterNickName.text = genericNicknames[UnityEngine.Random.Range(0, genericNicknames.Length - 1)];
+        PhotonNetwork.NickName = defaultNickName;
+        characterNickName.text = defaultNickName;
+    }
+    
+    public void SetPlayerNickName(string value)
+    {
+        if(string.IsNullOrEmpty(value))
+        {
+            Debug.Log("Character nickname input is null or empty");
+            return;
+        }
+        PhotonNetwork.NickName = value;
+        PlayerPrefs.SetString(genericNickName, value);
     }
     public override void OnConnectedToMaster()
     {

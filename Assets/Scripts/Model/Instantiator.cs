@@ -16,6 +16,7 @@ public class Instantiator : MonoBehaviourPun
     {
         //character = GameObject.FindObjectOfType<CharacterModel>();
         //character = PhotonView.Find(PhotonNetwork.LocalPlayer.ActorNumber).gameObject.GetComponent<CharacterModel>();
+
         CheckSpawnPoints();
 
     }
@@ -32,7 +33,8 @@ public class Instantiator : MonoBehaviourPun
                 if (spawnPoints[i].IsAvaiable)
                 {
                     spawnPoints[i].IsAvaiable = false;
-                    photonView.RPC("SpawnPlayer", RpcTarget.All, spawnPoints[i].transform.position, Quaternion.identity);
+                    //photonView.RPC("SpawnPlayer", RpcTarget.All, spawnPoints[i].transform.position, Quaternion.identity);
+                    SpawnPlayer(spawnPoints[i].transform.position, Quaternion.identity);
                     Debug.Log("Player position: " + spawnPoints[i].transform.position);
                     Debug.Log("Is avaiable after spawning player? " + spawnPoints[i].IsAvaiable);
                     return;
@@ -41,10 +43,10 @@ public class Instantiator : MonoBehaviourPun
         }
     }
 
-    [PunRPC]
+    //[PunRPC]
     void SpawnPlayer(Vector3 position, Quaternion rotation)
     {
-        PhotonNetwork.Instantiate("Character", position, rotation);
+        PhotonNetwork.Instantiate("Player", position, rotation);
     }
 
 }

@@ -14,8 +14,7 @@ public class GameManager : MonoBehaviourPun
     }
     private void Start()
     {
-        //if(photonView.IsMine)
-            gameInstantiator.HandlePlayerSpawning();
+        gameInstantiator.HandlePlayerSpawning();
     }
 
 }
