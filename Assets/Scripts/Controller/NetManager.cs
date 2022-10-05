@@ -15,6 +15,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     [SerializeField] TextMeshProUGUI connectionStatus;
     [SerializeField] TextMeshProUGUI roomName;
     [SerializeField] TextMeshProUGUI characterNickName;
+    string playersMaxNumber = "2";
     string[] genericNicknames = { "Menem", "Chinchulancha", "SinNombre" };
     string genericNickName = "Puflito";
     private void Awake()
@@ -83,10 +84,18 @@ public class NetManager : MonoBehaviourPunCallbacks
     }
     public void Connect()
     {
+
+        if (string.IsNullOrEmpty(roomName.text) || string.IsNullOrWhiteSpace(roomName.text)) return;
+        else if (string.IsNullOrEmpty(characterNickName.text) || string.IsNullOrWhiteSpace(characterNickName.text)) return;
+
+
+
         RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 3;
+        options.MaxPlayers = byte.Parse(playersMaxNumber);
         options.IsOpen = true;
         options.IsVisible = true;
+
+        //playersMaxNumber = options.MaxPlayers;
         //TODO setear nickname
 
         Debug.Log("Room name:" + roomName.text.ToString());
@@ -109,8 +118,11 @@ public class NetManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        connectionStatus.text = "Joined room";
-        PhotonNetwork.LoadLevel("Game");
+        if (PhotonNetwork.CurrentRoom.PlayerCount == int.Parse(playersMaxNumber))
+        {
+            connectionStatus.text = "Joined room";
+            PhotonNetwork.LoadLevel(TagManager.GAME_SCREEN_TAG);
+        }
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {

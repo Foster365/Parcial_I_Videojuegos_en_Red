@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterModel : MonoBehaviour
+using Photon.Pun;
+
+public class CharacterModel : MonoBehaviourPun
 {
     bool hasPlayerAlreadySpawned = false;
 
@@ -11,7 +13,7 @@ public class CharacterModel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        print("Sarasa" + photonView.Owner);
     }
 
     // Update is called once per frame

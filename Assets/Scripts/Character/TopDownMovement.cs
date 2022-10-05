@@ -18,8 +18,8 @@ public class TopDownMovement : MonoBehaviourPun
     private Camera camera;
     private void Awake()
     {
-        if (!photonView.IsMine) Destroy(this.gameObject);
-        camera = GameObject.FindWithTag("MainCamera").gameObject.GetComponent<Camera>();
+        if (!photonView.IsMine) Destroy(this);
+        camera = GameObject.FindWithTag(TagManager.MAIN_CAMERA_TAG).gameObject.GetComponent<Camera>();
         input = GetComponent<InputHandler>();
     }
 
