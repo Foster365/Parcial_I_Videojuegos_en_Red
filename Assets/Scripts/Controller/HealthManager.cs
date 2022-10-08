@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ public class HealthManager : MonoBehaviour
 {
     public int maxHealth = 3;
     public int currentHealth;
+
+    public event Action<float> OnHealthPctChanged = delegate { };
 
     void Start()
     {
@@ -21,5 +24,8 @@ public class HealthManager : MonoBehaviour
             //death
             Destroy(gameObject);
         }
+
+        float currentHealthPct = (float)currentHealth / (float)maxHealth;
+        OnHealthPctChanged(currentHealthPct);
     }
 }

@@ -20,6 +20,13 @@ public class TopDownMovement : MonoBehaviour
         input = GetComponent<InputHandler>();
     }
 
+    //void OnTriggerEnter(Collider coll)
+    //{
+    //   if (coll.CompareTag("Enemy"))
+    //    {
+    //        print("dmg");
+    //    }
+    //}
 
     // Update is called once per frame
     void Update()
