@@ -10,6 +10,7 @@ public static class TagManager
     #endregion
 
     #region Scene_Management_Tags
+    public const string LEVELS_MANAGER_TAG = "Levels_Manager";
     public const string MAIN_MENU_SCREEN_TAG = "Main_Menu";
     public const string GAME_SCREEN_TAG = "Game";
     public const string WIN_SCREEN_TAG = "Win";

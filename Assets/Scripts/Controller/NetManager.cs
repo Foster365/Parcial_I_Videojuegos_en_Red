@@ -7,21 +7,26 @@ using Photon.Realtime;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using static LevelsManager;
 
 public class NetManager : MonoBehaviourPunCallbacks
 {
 
     [SerializeField] Button btnConnection;
     [SerializeField] TextMeshProUGUI connectionStatus;
-    [SerializeField] TextMeshProUGUI roomName;
-    [SerializeField] TextMeshProUGUI characterNickName;
+    [SerializeField] TextMeshProUGUI playersCount;
+    [SerializeField] InputFieldHandler inputFieldHandler;
+    LevelsManager levelsManager;
     string playersMaxNumber = "2";
     string[] genericNicknames = { "Menem", "Chinchulancha", "SinNombre" };
-    string genericNickName = "Puflito";
+    string genericNickName = "Carlos";
+    bool isRoomCreated = false;
+
     private void Awake()
     {
-        PhotonNetwork.AutomaticallySyncScene = true; //Esto hace que los jugadores cambien automáticamente a la misma escena
-        //Al utilizar PhotonNetwork.LoadScene();
+
+        levelsManager = GameObject.FindWithTag(TagManager.LEVELS_MANAGER_TAG).GetComponent<LevelsManager>();
+
     }
 
     // Start is called before the first frame update
@@ -29,41 +34,16 @@ public class NetManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.ConnectUsingSettings();
         btnConnection.interactable = false;
-        connectionStatus.text = "Connecting to Master";
-        HandleNickname();
-    }
-    void HandleNickname()
-    {
-        Debug.Log("Dale forro estas entrando o no?");
-        string defaultNickName = string.Empty;
-        if (characterNickName != null)
-        {
-            if (PlayerPrefs.HasKey(genericNickName))
-            {
-                defaultNickName = PlayerPrefs.GetString(genericNickName);
-                characterNickName.text = defaultNickName;
-            }
-        }
 
-        //characterNickName.text = genericNicknames[UnityEngine.Random.Range(0, genericNicknames.Length - 1)];
-        PhotonNetwork.NickName = defaultNickName;
-        characterNickName.text = defaultNickName;
+        connectionStatus.text = "Connecting to Master";
+
     }
-    
-    public void SetPlayerNickName(string value)
-    {
-        if(string.IsNullOrEmpty(value))
-        {
-            Debug.Log("Character nickname input is null or empty");
-            return;
-        }
-        PhotonNetwork.NickName = value;
-        PlayerPrefs.SetString(genericNickName, value);
-    }
+
     public override void OnConnectedToMaster()
     {
         btnConnection.interactable = false;
         PhotonNetwork.JoinLobby();
+
         connectionStatus.text = "Connecting to Lobby";
     }
 
@@ -75,58 +55,59 @@ public class NetManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         btnConnection.interactable = true;
+
         connectionStatus.text = "Connected to Lobby";
     }
     public override void OnLeftLobby()
     {
         base.OnLeftLobby();
+
         connectionStatus.text = "Disconnected from lobby";
     }
+
     public void Connect()
     {
 
-        if (string.IsNullOrEmpty(roomName.text) || string.IsNullOrWhiteSpace(roomName.text)) return;
-        else if (string.IsNullOrEmpty(characterNickName.text) || string.IsNullOrWhiteSpace(characterNickName.text)) return;
-
-
-
         RoomOptions options = new RoomOptions();
-        options.MaxPlayers = byte.Parse(playersMaxNumber);
+        options.MaxPlayers = 3;
         options.IsOpen = true;
         options.IsVisible = true;
 
-        //playersMaxNumber = options.MaxPlayers;
-        //TODO setear nickname
-
-        Debug.Log("Room name:" + roomName.text.ToString());
-
-        PhotonNetwork.JoinOrCreateRoom(roomName.text, options, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom(inputFieldHandler.RoomName.text, options, TypedLobby.Default);
 
         btnConnection.interactable = false;
     }
 
     public override void OnCreatedRoom()
     {
-        connectionStatus.text = "Room" + roomName.text + " was created";
+        isRoomCreated = true;
+
+        connectionStatus.text = "Room " + inputFieldHandler.RoomName.text + " was created!";
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        connectionStatus.text = "Failed to create room " + roomName.text;
+
+        connectionStatus.text = "Failed to create room " + inputFieldHandler.RoomName.text;
+
         btnConnection.interactable = true;
+
     }
 
     public override void OnJoinedRoom()
     {
-        if (PhotonNetwork.CurrentRoom.PlayerCount == int.Parse(playersMaxNumber))
-        {
             connectionStatus.text = "Joined room";
-            PhotonNetwork.LoadLevel(TagManager.GAME_SCREEN_TAG);
+
+        if (levelsManager != null && levelsManager.LevelsDictionary.Count > 0)
+        {
+            string level = levelsManager.GetDictionaryValue(Levels.gameScreen, LevelsValues.Game).ToString();
+            PhotonNetwork.LoadLevel(level);
         }
+        //}
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        connectionStatus.text = "Failed to join room " + roomName.text;
+        connectionStatus.text = "Failed to join room " + inputFieldHandler.RoomName.text;
         btnConnection.interactable = true;
     }
 
