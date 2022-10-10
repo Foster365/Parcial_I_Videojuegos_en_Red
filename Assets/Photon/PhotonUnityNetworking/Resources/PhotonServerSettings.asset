@@ -47,6 +47,8 @@ MonoBehaviour:
   - LoadGameOverScene
   - LoadWinScene
   - StartGameInitCountdown
+  - RequestNick
+  - UpdateNick
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
