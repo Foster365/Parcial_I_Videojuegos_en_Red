@@ -9,18 +9,21 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using static LevelsManager;
 
 public class GameManager : MonoBehaviourPun
 {
 
     Instantiator gameInstantiator;
-
+    LevelsManager levelManager;
     [SerializeField] TextMeshProUGUI gameStartTimer;
     [SerializeField] TextMeshProUGUI gameTimer;
     float timeLeft = 200;
     int initTimer = 3;
 
     bool isGameOn = false;
+    [SerializeField] bool isVictory = false;
+    [SerializeField] bool isDefeat = false;
 
     #region Singleton
 
@@ -43,9 +46,11 @@ public class GameManager : MonoBehaviourPun
     }
     private void Start()
     {
+        levelManager = GameObject.FindWithTag(TagManager.LEVELS_MANAGER_TAG).gameObject.GetComponent<LevelsManager>();
         gameTimer.enabled = false;
+        gameStartTimer.enabled = false;
         gameInstantiator.HandlePlayerSpawning();
-        if (PhotonNetwork.PlayerList.Length == 1) StartGameInitCountdown();
+        if (PhotonNetwork.PlayerList.Length == 2) photonView.RPC("StartGameInitCountdown", RpcTarget.All);
         //if (photonView.IsMine) UpdateGameTimer();
         //photonView.RPC("StartGameTimer", RpcTarget.All);
         gameTimer.text = timeLeft.ToString();
@@ -54,8 +59,11 @@ public class GameManager : MonoBehaviourPun
     private void Update()
     {
         if (isGameOn) UpdateGameTimer();//photonView.RPC("UpdateGameTimer", RpcTarget.All);
+        CheckVictory();
+        CheckDefeat();
     }
 
+    [PunRPC]
     void StartGameInitCountdown()
     {
         StartCoroutine(InitCountdown());
@@ -65,12 +73,22 @@ public class GameManager : MonoBehaviourPun
     {
         while(initTimer>0)
         {
-            gameStartTimer.text = initTimer.ToString();
+            gameStartTimer.enabled = true;
+            gameStartTimer.text = "Game starts in " + initTimer.ToString();
             yield return new WaitForSeconds(1f);
             initTimer--;
         }
+        gameStartTimer.text = "Game starts!";
+        StartCoroutine(WaitToStartCoroutine());
+    }
+
+    IEnumerator WaitToStartCoroutine()
+    {
+        yield return new WaitForSeconds(2);
+        gameStartTimer.enabled = false;
         StartGameTest();
     }
+
     void StartGameTest()
     {
 
@@ -105,6 +123,32 @@ public class GameManager : MonoBehaviourPun
         var seconds = Mathf.FloorToInt(currentTime % 60);
 
         gameTimer.text = String.Format("{0:00}:{1:00} ", minutes, seconds);
+    }
+
+    void CheckVictory()
+    {
+
+        if (isVictory) photonView.RPC("LoadWinScene", RpcTarget.All);
+    }
+
+    void CheckDefeat()
+    {
+
+        if (isDefeat) photonView.RPC("LoadGameOverScene", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void LoadWinScene()
+    {
+        string level = levelManager.GetDictionaryValue(Levels.winScreen, LevelsValues.Win).ToString();
+        SceneManager.LoadScene(level);
+    }
+
+    [PunRPC]
+    void LoadGameOverScene()
+    {
+        string level = levelManager.GetDictionaryValue(Levels.gameOverScreen, LevelsValues.Game_Over).ToString();
+        SceneManager.LoadScene(level);
     }
 
 }
