@@ -15,8 +15,10 @@ public class GameManager : MonoBehaviourPun
 
     Instantiator gameInstantiator;
 
+    [SerializeField] TextMeshProUGUI gameStartTimer;
     [SerializeField] TextMeshProUGUI gameTimer;
     float timeLeft = 200;
+    int initTimer = 3;
 
     bool isGameOn = false;
 
@@ -41,8 +43,9 @@ public class GameManager : MonoBehaviourPun
     }
     private void Start()
     {
+        gameTimer.enabled = false;
         gameInstantiator.HandlePlayerSpawning();
-        if (PhotonNetwork.PlayerList.Length == 2) StartGame();
+        if (PhotonNetwork.PlayerList.Length == 1) StartGameInitCountdown();
         //if (photonView.IsMine) UpdateGameTimer();
         //photonView.RPC("StartGameTimer", RpcTarget.All);
         gameTimer.text = timeLeft.ToString();
@@ -50,31 +53,45 @@ public class GameManager : MonoBehaviourPun
 
     private void Update()
     {
-        if (isGameOn) photonView.RPC("UpdateGameTimer", RpcTarget.All);
+        if (isGameOn) UpdateGameTimer();//photonView.RPC("UpdateGameTimer", RpcTarget.All);
     }
 
-    void StartGame()
+    void StartGameInitCountdown()
     {
-        StartCoroutine(StartGameInitCoroutine());
+        StartCoroutine(InitCountdown());
     }
 
-    IEnumerator StartGameInitCoroutine()
+    IEnumerator InitCountdown()
     {
-        Debug.Log("Starting game in 3 sec");
-        yield return new WaitForSeconds(3);
-        isGameOn = true;
+        while(initTimer>0)
+        {
+            gameStartTimer.text = initTimer.ToString();
+            yield return new WaitForSeconds(1f);
+            initTimer--;
+        }
+        StartGameTest();
+    }
+    void StartGameTest()
+    {
+
+        photonView.RPC("SetGameOnBoolean", RpcTarget.All, true);
         Debug.Log("Game begins");
-        //photonView.RPC("UpdateGameTimer", RpcTarget.All);
+    }
+    [PunRPC]
+    bool SetGameOnBoolean(bool isOn)
+    {
+        return isGameOn = isOn;
     }
     [PunRPC]
     void StartGameTimer()
     {
         UpdateGameTimer();
     }
-    [PunRPC]
+    //[PunRPC]
     void UpdateGameTimer()
     {
 
+        gameTimer.enabled = true;
             timeLeft -= Time.deltaTime;
 
             HandleGameTimer(timeLeft);
