@@ -787,7 +787,7 @@ GameObject:
   - component: {fileID: 1459642411}
   - component: {fileID: 1459642410}
   m_Layer: 6
-  m_Name: Player
+  m_Name: Player2
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -916,7 +916,6 @@ MonoBehaviour:
   moveSpeed: 4
   rotateSpeed: 15
   rotateTowardsMouse: 1
-  camera: {fileID: 0}
 --- !u!114 &1294940464365605473
 MonoBehaviour:
   m_ObjectHideFlags: 0
