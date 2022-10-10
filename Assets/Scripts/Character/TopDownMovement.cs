@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using System;
 
-public class TopDownMovement : MonoBehaviour
+public class TopDownMovement : MonoBehaviourPun
 {
     private InputHandler input;
 
@@ -13,10 +15,11 @@ public class TopDownMovement : MonoBehaviour
     [SerializeField]
     private bool rotateTowardsMouse;
 
-    [SerializeField]
     private Camera camera;
     private void Awake()
     {
+        if (!photonView.IsMine) Destroy(this);
+        camera = GameObject.FindWithTag(TagManager.MAIN_CAMERA_TAG).gameObject.GetComponent<Camera>();
         input = GetComponent<InputHandler>();
     }
 
@@ -31,17 +34,20 @@ public class TopDownMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var targetVector = new Vector3(input.InputVector.x, 0, input.InputVector.y);
+        if(photonView.IsMine)
+        {
+            var targetVector = new Vector3(input.InputVector.x, 0, input.InputVector.y);
 
-        var movementVector = MoveTowardsTarget(targetVector);
-        if (!rotateTowardsMouse)
-            RotateTowardMovementVector(movementVector);
-        else
-            RotateTowardMouseVector();
+            var movementVector = MoveTowardsTarget(targetVector);
+
+            if (!rotateTowardsMouse) RotateTowardMovementVector(movementVector);
+            else RotateTowardMouseVector();
+        }
     }
 
     private void RotateTowardMouseVector()
     {
+        Debug.Log("Pan con pimienta");
         Ray ray = camera.ScreenPointToRay(input.MousePosition);
 
         if(Physics.Raycast(ray, out RaycastHit hitInfo, maxDistance: 300f))
@@ -54,7 +60,8 @@ public class TopDownMovement : MonoBehaviour
 
     private void RotateTowardMovementVector(Vector3 movementVector)
     {
-        if(movementVector.magnitude == 0) { return; }
+        Debug.Log("Clavicula de papas");
+        if(movementVector.magnitude == 0) return;
         var rotation = Quaternion.LookRotation(movementVector);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotateSpeed);
     }
