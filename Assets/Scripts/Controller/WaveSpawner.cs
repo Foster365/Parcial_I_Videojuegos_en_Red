@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
+
     public enum SpawnState { SPAWNING, WAITING, COUNTING}
 
     [System.Serializable]
@@ -67,7 +68,7 @@ public class WaveSpawner : MonoBehaviour
 
         if (nextWave + 1 > waves.Length - 1)
         {
-            nextWave = 0;
+            //nextWave = 0;
             Debug.Log("All waves complete");
         }
         else
@@ -82,7 +83,7 @@ public class WaveSpawner : MonoBehaviour
         if (searchCountdown <= 0f)
         {
             searchCountdown = 1f;
-            if (GameObject.FindGameObjectsWithTag("Enemy") == null)
+            if (GameObject.FindWithTag("Enemy") == null)
             {
                 return false;
             }
