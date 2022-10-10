@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviourPun
     [SerializeField] TextMeshProUGUI gameTimer;
     float timeLeft = 200;
 
+    bool isGameOn = false;
+
     #region Singleton
 
     public GameManager GameManagerInstance { get; private set; }
@@ -40,19 +42,42 @@ public class GameManager : MonoBehaviourPun
     private void Start()
     {
         gameInstantiator.HandlePlayerSpawning();
+        if (PhotonNetwork.PlayerList.Length == 2) StartGame();
+        //if (photonView.IsMine) UpdateGameTimer();
+        //photonView.RPC("StartGameTimer", RpcTarget.All);
         gameTimer.text = timeLeft.ToString();
     }
 
     private void Update()
     {
-        if (photonView.IsMine) UpdateGameTimer();
+        if (isGameOn) photonView.RPC("UpdateGameTimer", RpcTarget.All);
     }
 
+    void StartGame()
+    {
+        StartCoroutine(StartGameInitCoroutine());
+    }
+
+    IEnumerator StartGameInitCoroutine()
+    {
+        Debug.Log("Starting game in 3 sec");
+        yield return new WaitForSeconds(3);
+        isGameOn = true;
+        Debug.Log("Game begins");
+        //photonView.RPC("UpdateGameTimer", RpcTarget.All);
+    }
+    [PunRPC]
+    void StartGameTimer()
+    {
+        UpdateGameTimer();
+    }
+    [PunRPC]
     void UpdateGameTimer()
     {
-        timeLeft -= Time.deltaTime;
 
-        HandleGameTimer(timeLeft);
+            timeLeft -= Time.deltaTime;
+
+            HandleGameTimer(timeLeft);
 
     }
     public void HandleGameTimer(float currentTime)
