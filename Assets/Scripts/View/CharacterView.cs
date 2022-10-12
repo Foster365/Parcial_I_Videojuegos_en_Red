@@ -17,7 +17,6 @@ public class CharacterView : MonoBehaviourPun
         var gameCanvas = GameObject.Find("Canvas");
         playerNick = GameObject.Instantiate(playerNickPrefab, gameCanvas.transform);
         playerNick.SetTarget(transform);
-        Debug.Log("Prefs: " + PlayerPrefs.GetString(InputFieldHandler.playerNamePrefKey));
 
         if(photonView.IsMine)
         {

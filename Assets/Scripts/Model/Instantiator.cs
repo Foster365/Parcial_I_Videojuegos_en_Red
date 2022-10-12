@@ -21,7 +21,7 @@ public class Instantiator : MonoBehaviourPun
     public void HandlePlayerSpawning()
     {
         GameObject playerSpawnPoint = playerSpawnPoints[UnityEngine.Random.Range(0, playerSpawnPoints.Length - 1)];
-        SpawnPlayer(playerSpawnPoint.transform.position, playerSpawnPoint.transform.rotation);
+        SpawnCharacter("Player", playerSpawnPoint.transform.position, playerSpawnPoint.transform.rotation);
         //photonView.RPC("SpawnPlayer", RpcTarget.All, playerSpawnPoint.transform.position, playerSpawnPoint.transform.rotation);
         var playersCount = PhotonNetwork.PlayerList.Length;
 
@@ -40,23 +40,20 @@ public class Instantiator : MonoBehaviourPun
 
             for (int i = 0; i < spawnPoints.Length; i++)
             {
-                Debug.Log("Is avaiable before spawning player? " + spawnPoints[i].IsAvaiable);
                 if (spawnPoints[i].IsAvaiable)
                 {
                     spawnPoints[i].IsAvaiable = false;
                     photonView.RPC("SpawnPlayer", RpcTarget.All, spawnPoints[i].transform.position, Quaternion.identity);
-                    SpawnPlayer(spawnPoints[i].transform.position, Quaternion.identity);
-                    Debug.Log("Player position: " + spawnPoints[i].transform.position);
-                    Debug.Log("Is avaiable after spawning player? " + spawnPoints[i].IsAvaiable);
+                    SpawnCharacter("Player", spawnPoints[i].transform.position, Quaternion.identity);
                     return;
                 }
             }
         }
     }
 
-    void SpawnPlayer(Vector3 position, Quaternion rotation)
+    public void SpawnCharacter(string characterPrefName, Vector3 position, Quaternion rotation)
     {
-        PhotonNetwork.Instantiate("Player", position, rotation);
+        PhotonNetwork.Instantiate(characterPrefName, position, rotation);
     }
 
 }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+using Photon.Pun;
+using Photon.Realtime;
+
 public class PlayerNickname : MonoBehaviour
 {
     public TextMeshProUGUI nickNameUI;
@@ -21,6 +24,7 @@ public class PlayerNickname : MonoBehaviour
     {
         nickNameUI.text = nick;
     }
+
     private void Update()
     {
         if (target != null)
