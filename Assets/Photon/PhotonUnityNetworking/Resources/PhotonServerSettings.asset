@@ -49,6 +49,14 @@ MonoBehaviour:
   - StartGameInitCountdown
   - RequestNick
   - UpdateNick
+  - SpawnEnemy
+  - HandleSpawnWaveState
+  - SetNewWave
+  - WaveCompleted
+  - AttackPlayer
+  - ChasePlayer
+  - UpdateTarget
+  - Patrolling
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

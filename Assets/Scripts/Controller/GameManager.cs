@@ -91,9 +91,7 @@ public class GameManager : MonoBehaviourPun
 
     void StartGameTest()
     {
-
         photonView.RPC("SetGameOnBoolean", RpcTarget.All, true);
-        Debug.Log("Game begins");
     }
     [PunRPC]
     bool SetGameOnBoolean(bool isOn)

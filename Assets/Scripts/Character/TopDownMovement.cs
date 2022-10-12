@@ -40,7 +40,6 @@ public class TopDownMovement : MonoBehaviourPun
 
     private void RotateTowardMouseVector()
     {
-        Debug.Log("Pan con pimienta");
         Ray ray = camera.ScreenPointToRay(input.MousePosition);
 
         if(Physics.Raycast(ray, out RaycastHit hitInfo, maxDistance: 300f))
@@ -53,7 +52,6 @@ public class TopDownMovement : MonoBehaviourPun
 
     private void RotateTowardMovementVector(Vector3 movementVector)
     {
-        Debug.Log("Clavicula de papas");
         if(movementVector.magnitude == 0) return;
         var rotation = Quaternion.LookRotation(movementVector);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotateSpeed);

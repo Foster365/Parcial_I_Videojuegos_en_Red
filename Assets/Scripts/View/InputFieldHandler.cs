@@ -36,9 +36,6 @@ public class InputFieldHandler : MonoBehaviourPun
         if(photonView.IsMine)
         {
 
-            Debug.Log("AAAAAAAAAAANISMAN!!!: " + PlayerPrefs.GetString(playerNamePrefKey));
-            Debug.Log("AAAAAAAAAAANISMAN!!!: " + PlayerPrefs.GetString(roomNamePrefKey));
-
         }
     }
     public void HandleName(TMP_InputField textInputName, string defaultInputName)
@@ -64,7 +61,6 @@ public class InputFieldHandler : MonoBehaviourPun
         // #Important
         if (string.IsNullOrEmpty(characterNickName.text))
         {
-            Debug.LogError("Player Name is null or empty");
             return;
         }
         PhotonNetwork.NickName = characterNickName.text;
@@ -78,7 +74,6 @@ public class InputFieldHandler : MonoBehaviourPun
         // #Important
         if (string.IsNullOrEmpty(roomName.text))
         {
-            Debug.LogError("Player Name is null or empty");
             return;
         }
         //PhotonNetwork.CurrentRoom.Name = room.text;
