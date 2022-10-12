@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaveSpawner : MonoBehaviour
+using Photon.Pun;
+using Photon.Realtime;
+using System;
+
+public class WaveSpawner : MonoBehaviourPun
 {
 
     public enum SpawnState { SPAWNING, WAITING, COUNTING}
@@ -39,8 +43,7 @@ public class WaveSpawner : MonoBehaviour
         {
             if (!EnemyIsAlive())
             {
-                WaveCompleted();
-                
+                photonView.RPC("WaveCompleted", RpcTarget.All);
             }
             else
             {
@@ -50,9 +53,10 @@ public class WaveSpawner : MonoBehaviour
 
         if (waveCountdown <= 0)
         {
-            if (state != SpawnState.SPAWNING)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && state != SpawnState.SPAWNING)
             {
-                StartCoroutine( SpawnWave( waves [nextWave] ) );
+                photonView.RPC("HandleWaveSpawning", RpcTarget.All);
+                Debug.Log("Changing state to spawning");
             }
         }
         else
@@ -61,6 +65,7 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
+    [PunRPC]
     void WaveCompleted()
     {
         state = SpawnState.COUNTING;
@@ -73,8 +78,20 @@ public class WaveSpawner : MonoBehaviour
         }
         else
         {
-            nextWave++;
+            photonView.RPC("SetWaveCompleted", RpcTarget.All);
         }
+    }
+
+    [PunRPC]
+    void SetWaveCompleted()
+    {
+        nextWave++;
+    }
+
+    [PunRPC]
+    void HandleWaveSpawning()
+    {
+        StartCoroutine(SpawnWave(waves[nextWave]));
     }
 
     bool EnemyIsAlive()
@@ -97,7 +114,7 @@ public class WaveSpawner : MonoBehaviour
         
         for (int i = 0; i<_wave.count; i++)
         {
-            SpawnEnemy(_wave.enemy);
+            photonView.RPC("SpawnEnemy", RpcTarget.All);//, _wave.enemy);
             yield return new WaitForSeconds(1f / _wave.spawnRate);
         }
 
@@ -106,11 +123,12 @@ public class WaveSpawner : MonoBehaviour
         yield break;
     }
 
-    void SpawnEnemy(Transform _enemy)
+    [PunRPC]
+    void SpawnEnemy()//(Transform _enemy)
     {
         //spawn
-        Transform _sp = spawnPoint[Random.Range (0, spawnPoint.Length) ];
-        Instantiate(_enemy, _sp.position, _sp.rotation);
+        Transform _sp = spawnPoint[UnityEngine.Random.Range(0, spawnPoint.Length) ];
+        PhotonNetwork.Instantiate("Enemy", _sp.position, _sp.rotation);
     }
 
 }
