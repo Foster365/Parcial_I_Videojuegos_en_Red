@@ -24,6 +24,7 @@ public class WaveSpawner : MonoBehaviourPun
     private int nextWave = 0;
 
     public Transform[] spawnPoint;
+    Transform currSpawnpoint;
 
     public float timeBetweenWaves = 5f;
     public float waveCountdown;
@@ -111,10 +112,11 @@ public class WaveSpawner : MonoBehaviourPun
     IEnumerator SpawnWave(Wave _wave)
     {
         state = SpawnState.SPAWNING;
-        
-        for (int i = 0; i<_wave.count; i++)
+
+        for (int i = 0; i < _wave.count; i++)
         {
-            photonView.RPC("SpawnEnemy", RpcTarget.All);//, _wave.enemy);
+            //photonView.RPC("SpawnEnemy", RpcTarget.All);//, _wave.enemy);
+            SpawnEnemy();
             yield return new WaitForSeconds(1f / _wave.spawnRate);
         }
 
@@ -123,12 +125,19 @@ public class WaveSpawner : MonoBehaviourPun
         yield break;
     }
 
-    [PunRPC]
     void SpawnEnemy()//(Transform _enemy)
     {
         //spawn
-        Transform _sp = spawnPoint[UnityEngine.Random.Range(0, spawnPoint.Length) ];
-        PhotonNetwork.Instantiate("Enemy", _sp.position, _sp.rotation);
+        Transform sp = spawnPoint[UnityEngine.Random.Range(0, spawnPoint.Length)];
+        //photonView.RPC("SetEnemySP", RpcTarget.All, sp);
+        Debug.Log("Spawnpoint: " + currSpawnpoint);
+        PhotonNetwork.Instantiate("Enemy", sp.position, sp.rotation);// _sp.position, _sp.rotation);
+    }
+
+    [PunRPC]
+    void SetEnemySP(Transform _sp)
+    {
+        currSpawnpoint = _sp;
     }
 
 }
