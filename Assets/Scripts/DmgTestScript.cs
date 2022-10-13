@@ -6,13 +6,10 @@ public class DmgTestScript : MonoBehaviour
 {
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.tag == "Player")
-        {
             var healthComponent = collision.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
-                healthComponent.TakeDamage(1);
+                healthComponent.TakeDamage(-1);
             }
-        }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float rotateSpeed;
+    public int bulletDmg;
     private void Update()
     {
         rotate();
@@ -12,7 +13,20 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Destroy(gameObject);
+        if (collision.collider.tag == "Enemy")
+        {
+            var healthComponent = collision.collider.GetComponent<HealthManager>();
+            if (healthComponent != null)
+            {
+                healthComponent.TakeDamage(bulletDmg);
+            }
+            Destroy(gameObject);
+        }
+        else
+        {
+          Destroy(gameObject);
+        }
+
     }
 
     void rotate()
