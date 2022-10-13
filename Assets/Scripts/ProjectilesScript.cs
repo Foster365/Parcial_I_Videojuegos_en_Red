@@ -6,14 +6,24 @@ public class ProjectilesScript : MonoBehaviour
 {
     public Transform firePoint;
     public GameObject bulletPrefab;
+    public Animator anim;
 
     public float bulletForce = 20f;
+
+    private void Start()
+    {
+        anim.gameObject.GetComponent<Animator>();
+    }
 
     void Update()
     {
         if (Input.GetButtonDown("Fire1"))
         {
             Shoot();
+        }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            anim.SetBool("Punch", true);
         }
     }
 
