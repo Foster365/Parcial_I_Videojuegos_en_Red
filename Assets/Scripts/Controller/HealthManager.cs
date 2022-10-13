@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class HealthManager : MonoBehaviour
+public class HealthManager : MonoBehaviourPun
 {
     public int maxHealth = 3;
     public int currentHealth;

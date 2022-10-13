@@ -193,9 +193,9 @@ GameObject:
   m_Component:
   - component: {fileID: 291470165}
   - component: {fileID: 291470164}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: TestMovement
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -784,7 +784,7 @@ MonoBehaviour:
     enemy: {fileID: 4432615850582559882, guid: 022d466ec6538de41a8ce5cba7dafef2, type: 3}
     count: 5
     spawnRate: 2
-  spawnPoint:
+  spawnPoints:
   - {fileID: 572495297}
   - {fileID: 794498021}
   - {fileID: 733658278}

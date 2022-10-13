@@ -10,6 +10,7 @@ public class CharacterView : MonoBehaviourPun
 {
     [SerializeField]PlayerNickname playerNickPrefab;
     PlayerNickname playerNick;
+    [SerializeField] bool isDead = false;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +26,10 @@ public class CharacterView : MonoBehaviourPun
         }
         else photonView.RPC("RequestNick", photonView.Owner, PhotonNetwork.LocalPlayer);
     }
+    private void Update()
+    {
+        if (isDead) OnDestroyNick();
+    }
 
     [PunRPC]
     void UpdateNick(string nickName)
@@ -39,6 +44,6 @@ public class CharacterView : MonoBehaviourPun
     }
     void OnDestroyNick()
     {
-        Destroy(playerNick.gameObject);
+        PhotonNetwork.Destroy(playerNick.gameObject);
     }
 }
