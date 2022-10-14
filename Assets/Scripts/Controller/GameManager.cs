@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviourPun
 
     private void Awake()
     {
-
         HandleSingleton();
         gameInstantiator = GetComponent<Instantiator>();
     }
@@ -87,6 +86,11 @@ public class GameManager : MonoBehaviourPun
         yield return new WaitForSeconds(2);
         gameStartTimer.enabled = false;
         StartGameTest();
+    }
+
+    IEnumerator WaitToSync()
+    {
+        yield return new WaitForSeconds(2);
     }
 
     void StartGameTest()

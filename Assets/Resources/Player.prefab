@@ -553,7 +553,7 @@ GameObject:
   - component: {fileID: 1383991298}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -746,6 +746,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNickPrefab: {fileID: 8619114771093964579, guid: c8df4f93341cd0946bf2b6389c2a7735, type: 3}
+  isDead: 0
 --- !u!114 &7695475593610396724
 MonoBehaviour:
   m_ObjectHideFlags: 0

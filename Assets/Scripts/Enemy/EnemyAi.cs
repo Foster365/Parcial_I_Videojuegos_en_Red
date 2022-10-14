@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 using Photon.Pun;
+using Photon.Realtime;
 
 public class EnemyAi : MonoBehaviourPun
 {
@@ -11,6 +12,8 @@ public class EnemyAi : MonoBehaviourPun
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public int health;
+
+    CharacterModel characterTarget;
 
     //patrol
     public Vector3 walkPoint;
@@ -34,19 +37,17 @@ public class EnemyAi : MonoBehaviourPun
 
     private void Update()
     {
-        if(photonView.IsMine)
-        {
             //player in sight/range
             playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
             playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-            if (!playerInSightRange && !playerInAttackRange) Patroling();
+            if (!playerInSightRange && !playerInAttackRange) Patrolling();
             if (playerInSightRange && !playerInAttackRange) ChasePlayer();
             if (playerInAttackRange && playerInSightRange) AttackPlayer();
-        }
+        
     }
 
-    private void Patroling()
+    private void Patrolling()
     {
         if (!walkPointSet) SearchWalkPoint();
 
@@ -73,15 +74,49 @@ public class EnemyAi : MonoBehaviourPun
 
     private void ChasePlayer()
     {
-        agent.SetDestination(player.position);
+        CharacterModel[] characters = FindObjectsOfType<CharacterModel>();
+
+        //var listCharacters = new List<CharacterModel>();
+
+        //for (int i = 0; i < characters.Length; i++)
+        //{
+        //    var curr = characters[i];
+        //    if (curr == characterTarget) continue;
+        //    listCharacters.Add(curr);
+        //}
+        //if (listCharacters.Count > 1) //Pruebo con 1, sino bajo el range del random.range
+        //{
+        int index = Random.Range(0, characters.Length);
+        //    SetTarget(listCharacters[index]);
+        //}
+        //else PhotonNetwork.Destroy(this.gameObject);
+
+        //Debug.Log("Character in index: " + characters[index]);
+
+        characterTarget = characters[index];
+        agent.SetDestination(characterTarget.transform.position);
+    }
+
+    void SetTarget(CharacterModel characterTgt)
+    {
+        characterTarget = characterTgt;
+        photonView.RPC("UpdateTarget", RpcTarget.Others, characterTgt.photonView.ViewID);
+    }
+
+    [PunRPC]
+    void UpdateTarget(int id)
+    {
+        PhotonView view = PhotonView.Find(id);
+        if (view != null) characterTarget = view.gameObject.GetComponent<CharacterModel>();
+        agent.SetDestination(characterTarget.transform.position);
     }
 
     private void AttackPlayer()
     {
         //enemy does not move
-        agent.SetDestination(transform.position);
+        agent.SetDestination(characterTarget.transform.position);
 
-        transform.LookAt(player);
+        transform.LookAt(characterTarget.transform);
 
         if (!alreadyAttacked)
         {

@@ -23,13 +23,15 @@ public class WaveSpawner : MonoBehaviourPun
     public Wave[] waves;
     private int nextWave = 0;
 
-    public Transform[] spawnPoint;
+    public Transform[] spawnPoints;
     Transform currSpawnpoint;
 
     public float timeBetweenWaves = 5f;
     public float waveCountdown;
 
     private float searchCountdown = 1f;
+
+    CharacterModel characterTarget;
 
     private SpawnState state = SpawnState.COUNTING;
     void Start()
@@ -127,17 +129,47 @@ public class WaveSpawner : MonoBehaviourPun
 
     void SpawnEnemy()//(Transform _enemy)
     {
-        //spawn
-        Transform sp = spawnPoint[UnityEngine.Random.Range(0, spawnPoint.Length)];
-        //photonView.RPC("SetEnemySP", RpcTarget.All, sp);
-        Debug.Log("Spawnpoint: " + currSpawnpoint);
-        PhotonNetwork.Instantiate("Enemy", sp.position, sp.rotation);// _sp.position, _sp.rotation);
+
+        if (!photonView.IsMine)
+        {
+            photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
+            if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
+            Debug.Log("Spawnpoint: " + currSpawnpoint);
+        }
     }
 
     [PunRPC]
-    void SetEnemySP(Transform _sp)
+    void RequestSpawnPoint(Player client)
     {
-        currSpawnpoint = _sp;
+        photonView.RPC("SetEnemyRandomSP", client);
+    }
+
+    [PunRPC]
+    Transform SetEnemyRandomSP()
+    {
+
+        List<Transform> list = new List<Transform>();
+
+        if(spawnPoints.Length > 1)
+        {
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                if (spawnPoints[i] != characterTarget) list.Add(spawnPoints[i]);
+            }
+
+            int index = UnityEngine.Random.Range(0, list.Count - 1);
+            currSpawnpoint = list[index];
+
+        }
+        else photonView.RPC("DestroyEnemy", RpcTarget.All);
+
+        return currSpawnpoint;
+    }
+
+    [PunRPC]
+    void DestroyEnemy()
+    {
+        Destroy(this.gameObject);
     }
 
 }
