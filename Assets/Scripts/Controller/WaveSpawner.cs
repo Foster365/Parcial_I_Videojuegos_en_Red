@@ -30,6 +30,7 @@ public class WaveSpawner : MonoBehaviourPun
     public float waveCountdown;
 
     private float searchCountdown = 1f;
+    public bool isWavesCompleted = false;
 
     CharacterModel characterTarget;
 
@@ -77,6 +78,7 @@ public class WaveSpawner : MonoBehaviourPun
         if (nextWave + 1 > waves.Length - 1)
         {
             //nextWave = 0;
+            isWavesCompleted = true;
             Debug.Log("All waves complete");
         }
         else

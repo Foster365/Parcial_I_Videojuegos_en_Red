@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviourPun
 
     Instantiator gameInstantiator;
     LevelsManager levelManager;
+    WaveSpawner waveSpawner;
     [SerializeField] TextMeshProUGUI gameStartTimer;
     [SerializeField] TextMeshProUGUI gameTimer;
     float timeLeft = 200;
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviourPun
     private void Start()
     {
         levelManager = GameObject.FindWithTag(TagManager.LEVELS_MANAGER_TAG).gameObject.GetComponent<LevelsManager>();
+        waveSpawner = GameObject.FindWithTag("GM").gameObject.GetComponent<WaveSpawner>();
         gameTimer.enabled = false;
         gameStartTimer.enabled = false;
         gameInstantiator.HandlePlayerSpawning();
@@ -130,13 +132,13 @@ public class GameManager : MonoBehaviourPun
     void CheckVictory()
     {
 
-        if (isVictory) photonView.RPC("LoadWinScene", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length > 0 && waveSpawner.isWavesCompleted) photonView.RPC("LoadWinScene", RpcTarget.All);
     }
 
     void CheckDefeat()
     {
 
-        if (isDefeat) photonView.RPC("LoadGameOverScene", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length == 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);)
     }
 
     [PunRPC]
