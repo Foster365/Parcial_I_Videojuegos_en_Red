@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using TMPro;
+
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -31,6 +33,8 @@ public class WaveSpawner : MonoBehaviourPun
 
     private float searchCountdown = 1f;
     public bool isWavesCompleted = false;
+    [SerializeField] TextMeshProUGUI wavesLeftText;
+    int wavesLeft;
 
     CharacterModel characterTarget;
 
@@ -38,11 +42,14 @@ public class WaveSpawner : MonoBehaviourPun
     void Start()
     {
         waveCountdown = timeBetweenWaves;
+        wavesLeft = waves.Length;
 
     }
 
     void Update()
     {
+        wavesLeft = waves.Length - nextWave;
+        wavesLeftText.text = "Waves left: " + wavesLeft + "/" + waves.Length;
         if (state == SpawnState.WAITING)
         {
             if (!EnemyIsAlive())

@@ -801,6 +801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   currentHealth: 0
+  isDead: 0
 --- !u!114 &1383991298
 MonoBehaviour:
   m_ObjectHideFlags: 0

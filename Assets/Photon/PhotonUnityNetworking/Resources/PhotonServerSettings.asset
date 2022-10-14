@@ -69,6 +69,8 @@ MonoBehaviour:
   - SetStartingHealth
   - Shoot
   - TakeDamage
+  - RequestTarget
+  - SetEnemyTarget
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

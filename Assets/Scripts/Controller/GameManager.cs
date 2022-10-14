@@ -9,9 +9,10 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using Photon.Pun.Demo.Cockpit;
 using static LevelsManager;
 
-public class GameManager : MonoBehaviourPun
+public class GameManager : MonoBehaviourPunCallbacks
 {
 
     Instantiator gameInstantiator;
@@ -60,8 +61,18 @@ public class GameManager : MonoBehaviourPun
     private void Update()
     {
         if (isGameOn) UpdateGameTimer();//photonView.RPC("UpdateGameTimer", RpcTarget.All);
+        CheckPlayerDisconnected();
         CheckVictory();
         CheckDefeat();
+    }
+
+    void CheckPlayerDisconnected()
+    {
+        if (!PhotonNetwork.InRoom && !PhotonNetwork.IsConnected)
+        {
+            Debug.Log("Quitting");
+            Application.Quit();
+        }
     }
 
     [PunRPC]
@@ -138,7 +149,7 @@ public class GameManager : MonoBehaviourPun
     void CheckDefeat()
     {
 
-        if (PhotonNetwork.PlayerList.Length == 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);)
+        if (PhotonNetwork.PlayerList.Length == 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
     }
 
     [PunRPC]

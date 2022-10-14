@@ -25,7 +25,7 @@ public class CharacterModel : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        if (healthManager.currentHealth <= 0) photonView.RPC("LoadGameOverScene", PhotonNetwork.LocalPlayer);
+        if (healthManager.isDead) photonView.RPC("LoadGameOverScene", PhotonNetwork.LocalPlayer);
     }
     [PunRPC]
     void LoadGameOverScene()

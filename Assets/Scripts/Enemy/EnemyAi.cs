@@ -13,6 +13,7 @@ public class EnemyAi : MonoBehaviourPun
     public LayerMask whatIsGround, whatIsPlayer;
     public int health;
 
+    CharacterModel[] characters;
     CharacterModel characterTarget;
 
     //patrol
@@ -30,9 +31,14 @@ public class EnemyAi : MonoBehaviourPun
 
     private void Awake()
     {
-        if (!photonView.IsMine) Destroy(this);
+        //if (!photonView.IsMine) Destroy(this);
         player = GameObject.FindWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        characters = FindObjectsOfType<CharacterModel>();
     }
 
     private void Update()
@@ -74,7 +80,8 @@ public class EnemyAi : MonoBehaviourPun
 
     private void ChasePlayer()
     {
-        CharacterModel[] characters = FindObjectsOfType<CharacterModel>();
+
+        if (photonView.IsMine) photonView.RPC("RequestTarget", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer);
 
         //var listCharacters = new List<CharacterModel>();
 
@@ -86,15 +93,29 @@ public class EnemyAi : MonoBehaviourPun
         //}
         //if (listCharacters.Count > 1) //Pruebo con 1, sino bajo el range del random.range
         //{
-        int index = Random.Range(0, characters.Length);
         //    SetTarget(listCharacters[index]);
         //}
         //else PhotonNetwork.Destroy(this.gameObject);
 
         //Debug.Log("Character in index: " + characters[index]);
 
-        characterTarget = characters[index];
-        agent.SetDestination(characterTarget.transform.position);
+    }
+
+    [PunRPC]
+    void RequestTarget(Player client)
+    {
+        if(characters.Length > 0)
+        {
+            int index = Random.Range(0, characters.Length);
+            Debug.Log("Index: " + index);
+            photonView.RPC("SetEnemyTarget", client, index);
+        }
+    }
+
+    [PunRPC]
+    void SetEnemyTarget(int index)
+    {
+        agent.SetDestination(characters[index].transform.position);
     }
 
     void SetTarget(CharacterModel characterTgt)

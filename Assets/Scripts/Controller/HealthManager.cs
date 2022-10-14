@@ -10,6 +10,8 @@ public class HealthManager : MonoBehaviourPun
     public int maxHealth = 3;
     public int currentHealth;
 
+    public bool isDead = false;
+
     public event Action<float> OnHealthPctChanged = delegate { };
 
     void Start()
@@ -18,7 +20,7 @@ public class HealthManager : MonoBehaviourPun
         {
             Destroy(this);
         }
-        photonView.RPC("SetStartingHealth", RpcTarget.All);
+        photonView.RPC("SetStartingHealth", PhotonNetwork.LocalPlayer);
     }
 
     [PunRPC]
@@ -35,6 +37,7 @@ public class HealthManager : MonoBehaviourPun
         if (currentHealth <= 0)
         {
             //death
+            isDead = true;
             photonView.RPC("Kill", PhotonNetwork.LocalPlayer);
         }
 
