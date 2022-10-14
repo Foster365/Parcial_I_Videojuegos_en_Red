@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviourPun
     void CheckDefeat()
     {
 
-        if (PhotonNetwork.PlayerList.Length == 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);)
+        if (PhotonNetwork.PlayerList.Length == 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
     }
 
     [PunRPC]
