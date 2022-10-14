@@ -40,6 +40,8 @@ public class TopDownMovement : MonoBehaviourPun
 
     private void RotateTowardMouseVector()
     {
+        if (photonView.IsMine)
+        {
         Ray ray = camera.ScreenPointToRay(input.MousePosition);
 
         if(Physics.Raycast(ray, out RaycastHit hitInfo, maxDistance: 300f))
@@ -47,6 +49,7 @@ public class TopDownMovement : MonoBehaviourPun
             var target = hitInfo.point;
             target.y = transform.position.y;
             transform.LookAt(target);
+        }
         }
     }
 

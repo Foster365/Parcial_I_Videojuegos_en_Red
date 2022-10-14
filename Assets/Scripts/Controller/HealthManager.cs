@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class HealthManager : MonoBehaviour
+public class HealthManager : MonoBehaviourPun
 {
     public int maxHealth = 3;
     public int currentHealth;
@@ -12,9 +14,20 @@ public class HealthManager : MonoBehaviour
 
     void Start()
     {
+        if (!photonView.IsMine)
+        {
+            Destroy(this);
+        }
+        photonView.RPC("SetStartingHealth", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void SetStartingHealth() 
+    {
         currentHealth = maxHealth;
     }
 
+    [PunRPC]
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
@@ -22,10 +35,16 @@ public class HealthManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             //death
-            Destroy(gameObject);
+            photonView.RPC("Kill", PhotonNetwork.LocalPlayer);
         }
 
         float currentHealthPct = (float)currentHealth / (float)maxHealth;
         OnHealthPctChanged(currentHealthPct);
+    }
+
+    [PunRPC]
+    void Kill()
+    {
+        PhotonNetwork.Destroy(gameObject);
     }
 }

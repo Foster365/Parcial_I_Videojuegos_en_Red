@@ -29,6 +29,24 @@ public class Bullet : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Enemy")
+        {
+            var healthComponent = other.GetComponent<HealthManager>();
+            if (healthComponent != null)
+            {
+                healthComponent.TakeDamage(bulletDmg);
+            }
+            Destroy(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+    }
+
     void rotate()
     {
         transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime, Space.World);
