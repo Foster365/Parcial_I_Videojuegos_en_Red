@@ -31,18 +31,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public GameManager GameManagerInstance { get; private set; }
 
-    void HandleSingleton()
-    {
-        if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
-        else GameManagerInstance = this;
-
-    }
-
     #endregion;
 
     private void Awake()
     {
-        HandleSingleton();
+        if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
+        else GameManagerInstance = this;
         gameInstantiator = GetComponent<Instantiator>();
     }
     private void Start()
@@ -90,6 +84,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(1f);
             initTimer--;
         }
+        isGameOn = true;
         gameStartTimer.text = "Game starts!";
         StartCoroutine(WaitToStartCoroutine());
     }
@@ -149,7 +144,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     void CheckDefeat()
     {
 
-        if (PhotonNetwork.PlayerList.Length == 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length == 0 || timeLeft <= 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
     }
 
     [PunRPC]

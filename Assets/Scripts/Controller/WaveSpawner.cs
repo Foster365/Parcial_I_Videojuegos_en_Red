@@ -35,12 +35,14 @@ public class WaveSpawner : MonoBehaviourPun
     public bool isWavesCompleted = false;
     [SerializeField] TextMeshProUGUI wavesLeftText;
     int wavesLeft;
+    bool isWaveOn = false;
 
     CharacterModel characterTarget;
 
     private SpawnState state = SpawnState.COUNTING;
     void Start()
     {
+        if(PhotonNetwork.PlayerList.Length == 2) isWaveOn = true;
         waveCountdown = timeBetweenWaves;
         wavesLeft = waves.Length;
 
@@ -64,7 +66,7 @@ public class WaveSpawner : MonoBehaviourPun
 
         if (waveCountdown <= 0)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && state != SpawnState.SPAWNING)
+            if (isWaveOn && state != SpawnState.SPAWNING)
             {
                 photonView.RPC("HandleWaveSpawning", RpcTarget.All);
                 Debug.Log("Changing state to spawning");
@@ -139,47 +141,47 @@ public class WaveSpawner : MonoBehaviourPun
     void HandleEnemySpawn()//(Transform _enemy)
     {
 
-        if (photonView.IsMine)
-        {
-            photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
-            //if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
-            Debug.Log("Spawnpoint: " + currSpawnpoint);
-        }
+        photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
+        //if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
+        Debug.Log("Spawnpoint: " + currSpawnpoint);
+        
     }
 
     [PunRPC]
     void RequestSpawnPoint(Player client)
     {
-        currSpawnpoint = SetEnemyRandomSP();
-        photonView.RPC("SpawnEnemy", client, currSpawnpoint);
+        //currSpawnpoint = SetEnemyRandomSP();
+        int index = SetEnemyRandomSP();
+        photonView.RPC("SpawnEnemy", client, index);
         //photonView.RPC("SetEnemyRandomSP", client, currSpawnpoint);
     }
 
     [PunRPC]
-    void SpawnEnemy(Transform _spawnPoint)
+    void SpawnEnemy(int _spawnPointIndex)
     {
-        PhotonNetwork.Instantiate("Enemy", _spawnPoint.position, _spawnPoint.rotation);
+        PhotonNetwork.Instantiate("Enemy", spawnPoints[_spawnPointIndex].position, spawnPoints[_spawnPointIndex].rotation);
     }
 
-    Transform SetEnemyRandomSP()
+    int SetEnemyRandomSP()
     {
 
-        List<Transform> list = new List<Transform>();
+        //List<Transform> list = new List<Transform>();
+        //re
+        //if(spawnPoints.Length > 1)
+        //{
+        //    for (int i = 0; i < spawnPoints.Length; i++)
+        //    {
+        //        if (spawnPoints[i] != characterTarget) list.Add(spawnPoints[i]);
+        //    }
 
-        if(spawnPoints.Length > 1)
-        {
-            for (int i = 0; i < spawnPoints.Length; i++)
-            {
-                if (spawnPoints[i] != characterTarget) list.Add(spawnPoints[i]);
-            }
+        int index = UnityEngine.Random.Range(0, spawnPoints.Length);
+        return index;
+        //    currSpawnpoint = list[index];
 
-            int index = UnityEngine.Random.Range(0, list.Count - 1);
-            currSpawnpoint = list[index];
+        //}
+        ////else photonView.RPC("DestroyEnemy", RpcTarget.All);
 
-        }
-        //else photonView.RPC("DestroyEnemy", RpcTarget.All);
-
-        return currSpawnpoint;
+        //return currSpawnpoint;
     }
 
     [PunRPC]

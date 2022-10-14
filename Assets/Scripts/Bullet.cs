@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+using Photon.Pun;
+using Photon.Realtime;
+
+public class Bullet : MonoBehaviourPun
 {
     public float rotateSpeed;
     public int bulletDmg;
+    HealthManager healthManager;
     private void Update()
     {
         rotate();
@@ -18,13 +22,13 @@ public class Bullet : MonoBehaviour
             var healthComponent = collision.collider.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
-                healthComponent.TakeDamage(bulletDmg);
+                photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
             }
-            Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
         }
         else
         {
-          Destroy(gameObject);
+          PhotonNetwork.Destroy(gameObject);
         }
 
     }
@@ -36,15 +40,28 @@ public class Bullet : MonoBehaviour
             var healthComponent = other.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
-                healthComponent.TakeDamage(bulletDmg);
+                healthManager = healthComponent;
+                photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
             }
-            Destroy(gameObject);
+            photonView.RPC("DestroyBullet", PhotonNetwork.LocalPlayer);
         }
         else
         {
-            Destroy(gameObject);
+            photonView.RPC("DestroyBullet", PhotonNetwork.LocalPlayer); 
         }
 
+    }
+
+    [PunRPC]
+    void DestroyBullet()
+    {
+        PhotonNetwork.Destroy(this.gameObject);
+    }
+
+    [PunRPC]
+    void TakeDamage(int damage)
+    {
+        if(healthManager != null)healthManager.TakeDamage(damage);
     }
 
     void rotate()

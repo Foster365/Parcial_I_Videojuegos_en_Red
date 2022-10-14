@@ -16,6 +16,8 @@ public class EnemyAi : MonoBehaviourPun
 
     CharacterModel[] characters;
     CharacterModel characterTarget;
+    int targetIndex;
+    bool isTargetIndexSet = false;
 
     //patrol
     public Vector3 walkPoint;
@@ -32,9 +34,6 @@ public class EnemyAi : MonoBehaviourPun
 
     private void Awake()
     {
-        //if (!photonView.IsMine) Destroy(this);
-
-        if (!photonView.IsMine) Destroy(this);
         player = GameObject.FindWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
@@ -47,6 +46,9 @@ public class EnemyAi : MonoBehaviourPun
 
     private void Update()
     {
+        if(characters != null)
+        {
+            Debug.Log("CHARACTERS COUNT: " + characters.Length);
             //player in sight/range
             playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
             playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
@@ -54,7 +56,8 @@ public class EnemyAi : MonoBehaviourPun
             if (!playerInSightRange && !playerInAttackRange) Patrolling();
             if (playerInSightRange && !playerInAttackRange) ChasePlayer();
             if (playerInAttackRange && playerInSightRange) AttackPlayer();
-        
+
+        }
     }
 
     private void Patrolling()
@@ -85,7 +88,10 @@ public class EnemyAi : MonoBehaviourPun
     private void ChasePlayer()
     {
 
-        if (photonView.IsMine) photonView.RPC("RequestTarget", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer);
+        if(photonView.IsMine && characters.Length >= 1)
+        {
+            agent.SetDestination(characters[targetIndex].transform.position);
+        }
 
         //var listCharacters = new List<CharacterModel>();
 
@@ -106,48 +112,51 @@ public class EnemyAi : MonoBehaviourPun
     }
 
     [PunRPC]
-    void RequestTarget(Player client)
+    void RequestTargetIndex(Player client)
     {
-        if(characters.Length > 0)
-        {
-            int index = Random.Range(0, characters.Length);
-            Debug.Log("Index: " + index);
-            photonView.RPC("SetEnemyTarget", client, index);
-        }
+
+            /*int index = Random.Range(0, characters.Length-1);*/
+            if (characters == null) Debug.Log("Characters es null");
+            //characterTarget = characters[index];
+            photonView.RPC("SetEnemyTargetIndex", client, UnityEngine.Random.Range(0, characters.Length));
+
     }
 
-    [PunRPC]
-    void SetEnemyTarget(int index)
+    void SetEnemyTargetIndex(int _index)
     {
-        agent.SetDestination(characters[index].transform.position);
+        targetIndex = _index;
+        //agent.SetDestination(_target.transform.position);
     }
 
-    void SetTarget(CharacterModel characterTgt)
-    {
-        characterTarget = characterTgt;
-        photonView.RPC("UpdateTarget", RpcTarget.Others, characterTgt.photonView.ViewID);
-    }
+    //void SetTarget(CharacterModel characterTgt)
+    //{
+    //    characterTarget = characterTgt;
+    //    photonView.RPC("UpdateTarget", RpcTarget.Others, characterTgt.photonView.ViewID);
+    //}
 
-    [PunRPC]
-    void UpdateTarget(int id)
-    {
-        PhotonView view = PhotonView.Find(id);
-        if (view != null) characterTarget = view.gameObject.GetComponent<CharacterModel>();
-        agent.SetDestination(characterTarget.transform.position);
-    }
+    //[PunRPC]
+    //void UpdateTarget(int id)
+    //{
+    //    PhotonView view = PhotonView.Find(id);
+    //    if (view != null) characterTarget = view.gameObject.GetComponent<CharacterModel>();
+    //    agent.SetDestination(characterTarget.transform.position);
+    //}
 
     private void AttackPlayer()
     {
-        //enemy does not move
-        agent.SetDestination(characterTarget.transform.position);
-
-        transform.LookAt(characterTarget.transform);
-
-        if (!alreadyAttacked)
+        if(characters.Length >= 1)
         {
-            anim.SetBool("Attack", true);
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            //enemy does not move
+            agent.SetDestination(characters[targetIndex].transform.position);
+
+            transform.LookAt(characters[targetIndex].transform);
+
+            if (!alreadyAttacked)
+            {
+                anim.SetBool("Attack", true);
+                alreadyAttacked = true;
+                Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            }
         }
     }
 

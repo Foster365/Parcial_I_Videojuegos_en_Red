@@ -20,7 +20,7 @@ public class HealthManager : MonoBehaviourPun
         {
             Destroy(this);
         }
-        photonView.RPC("SetStartingHealth", PhotonNetwork.LocalPlayer);
+        photonView.RPC("SetStartingHealth", RpcTarget.All);
     }
 
     [PunRPC]
@@ -33,7 +33,7 @@ public class HealthManager : MonoBehaviourPun
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
-        Debug.Log("Health: " + currentHealth);
+        Debug.Log(gameObject.name + "Health: " + currentHealth);
         if (currentHealth <= 0)
         {
             //death
@@ -48,6 +48,6 @@ public class HealthManager : MonoBehaviourPun
     [PunRPC]
     void Kill()
     {
-        PhotonNetwork.Destroy(gameObject);
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }
