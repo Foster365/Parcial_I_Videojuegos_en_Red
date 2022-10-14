@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         gameTimer.enabled = false;
         gameStartTimer.enabled = false;
         gameInstantiator.HandlePlayerSpawning();
-        if (PhotonNetwork.PlayerList.Length == 2) photonView.RPC("StartGameInitCountdown", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length == 3) photonView.RPC("StartGameInitCountdown", RpcTarget.All);
         //if (photonView.IsMine) UpdateGameTimer();
         //photonView.RPC("StartGameTimer", RpcTarget.All);
         gameTimer.text = timeLeft.ToString();
