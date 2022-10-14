@@ -159,7 +159,7 @@ public class WaveSpawner : MonoBehaviourPun
     [PunRPC]
     void SpawnEnemy(int _spawnPointIndex)
     {
-        PhotonNetwork.Instantiate("Enemy", spawnPoints[_spawnPointIndex].position, spawnPoints[_spawnPointIndex].rotation);
+        PhotonNetwork.Instantiate("Enemy2", spawnPoints[_spawnPointIndex].position, spawnPoints[_spawnPointIndex].rotation);
     }
 
     int SetEnemyRandomSP()
