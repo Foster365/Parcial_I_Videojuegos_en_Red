@@ -12,6 +12,7 @@ public class EnemyAi : MonoBehaviourPun
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public int health;
+    Animator anim;
 
     CharacterModel characterTarget;
 
@@ -30,9 +31,11 @@ public class EnemyAi : MonoBehaviourPun
 
     private void Awake()
     {
+
         if (!photonView.IsMine) Destroy(this);
         player = GameObject.FindWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -120,8 +123,7 @@ public class EnemyAi : MonoBehaviourPun
 
         if (!alreadyAttacked)
         {
-            //attack goes here
-
+            anim.SetBool("Attack", true);
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
