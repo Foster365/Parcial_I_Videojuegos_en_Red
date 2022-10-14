@@ -118,7 +118,7 @@ public class WaveSpawner : MonoBehaviourPun
         for (int i = 0; i < _wave.count; i++)
         {
             //photonView.RPC("SpawnEnemy", RpcTarget.All);//, _wave.enemy);
-            SpawnEnemy();
+            HandleEnemySpawn();
             yield return new WaitForSeconds(1f / _wave.spawnRate);
         }
 
@@ -127,13 +127,13 @@ public class WaveSpawner : MonoBehaviourPun
         yield break;
     }
 
-    void SpawnEnemy()//(Transform _enemy)
+    void HandleEnemySpawn()//(Transform _enemy)
     {
 
-        if (!photonView.IsMine)
+        if (photonView.IsMine)
         {
             photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
-            if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
+            //if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
             Debug.Log("Spawnpoint: " + currSpawnpoint);
         }
     }
@@ -141,10 +141,17 @@ public class WaveSpawner : MonoBehaviourPun
     [PunRPC]
     void RequestSpawnPoint(Player client)
     {
-        photonView.RPC("SetEnemyRandomSP", client);
+        currSpawnpoint = SetEnemyRandomSP();
+        photonView.RPC("SpawnEnemy", client, currSpawnpoint);
+        //photonView.RPC("SetEnemyRandomSP", client, currSpawnpoint);
     }
 
     [PunRPC]
+    void SpawnEnemy(Transform _spawnPoint)
+    {
+        PhotonNetwork.Instantiate("Enemy", _spawnPoint.position, _spawnPoint.rotation);
+    }
+
     Transform SetEnemyRandomSP()
     {
 
@@ -161,7 +168,7 @@ public class WaveSpawner : MonoBehaviourPun
             currSpawnpoint = list[index];
 
         }
-        else photonView.RPC("DestroyEnemy", RpcTarget.All);
+        //else photonView.RPC("DestroyEnemy", RpcTarget.All);
 
         return currSpawnpoint;
     }
