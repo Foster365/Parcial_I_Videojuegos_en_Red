@@ -291,6 +291,7 @@ GameObject:
   - component: {fileID: 283903103}
   - component: {fileID: 283903102}
   - component: {fileID: 283903105}
+  - component: {fileID: 283903106}
   m_Layer: 0
   m_Name: Wall (7)
   m_TagString: Enemy
@@ -388,6 +389,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   currentHealth: 0
+--- !u!114 &283903106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283903100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 6
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &452864826
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,7 +1975,10 @@ MonoBehaviour:
     enemy: {fileID: 4432615850582559882, guid: 022d466ec6538de41a8ce5cba7dafef2, type: 3}
     count: 5
     spawnRate: 2
-  spawnPoints: []
+  spawnPoints:
+  - {fileID: 572495297}
+  - {fileID: 794498021}
+  - {fileID: 733658278}
   timeBetweenWaves: 5
   waveCountdown: 0
 --- !u!4 &1527248443

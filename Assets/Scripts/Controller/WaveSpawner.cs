@@ -58,7 +58,8 @@ public class WaveSpawner : MonoBehaviourPun
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && state != SpawnState.SPAWNING)
             {
-                if (!photonView.IsMine) HandleWaveSpawning();
+                photonView.RPC("HandleWaveSpawning", RpcTarget.All);
+                Debug.Log("Changing state to spawning");
             }
         }
         else
@@ -129,7 +130,7 @@ public class WaveSpawner : MonoBehaviourPun
     void HandleEnemySpawn()//(Transform _enemy)
     {
 
-        if (!photonView.IsMine)
+        if (photonView.IsMine)
         {
             photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
             //if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
@@ -140,17 +141,18 @@ public class WaveSpawner : MonoBehaviourPun
     [PunRPC]
     void RequestSpawnPoint(Player client)
     {
-        photonView.RPC("SetEnemyRandomSP", client);
+        currSpawnpoint = SetEnemyRandomSP();
+        photonView.RPC("SpawnEnemy", client, currSpawnpoint);
+        //photonView.RPC("SetEnemyRandomSP", client, currSpawnpoint);
     }
 
     [PunRPC]
-    void SpawnEnemy(Player client)
+    void SpawnEnemy(Transform _spawnPoint)
     {
-
+        PhotonNetwork.Instantiate("Enemy", _spawnPoint.position, _spawnPoint.rotation);
     }
 
-    [PunRPC]
-    void SetEnemyRandomSP(Player client)
+    Transform SetEnemyRandomSP()
     {
 
         List<Transform> list = new List<Transform>();
@@ -165,14 +167,11 @@ public class WaveSpawner : MonoBehaviourPun
             int index = UnityEngine.Random.Range(0, list.Count - 1);
             currSpawnpoint = list[index];
 
-            PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
-
         }
+        //else photonView.RPC("DestroyEnemy", RpcTarget.All);
 
-        //return currSpawnpoint;
+        return currSpawnpoint;
     }
-
-
 
     [PunRPC]
     void DestroyEnemy()
