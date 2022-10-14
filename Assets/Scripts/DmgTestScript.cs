@@ -9,7 +9,7 @@ public class DmgTestScript : MonoBehaviour
             var healthComponent = collision.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
-                healthComponent.TakeDamage(1);
+                healthComponent.TakeDamage(2);
             }
     }
 }
