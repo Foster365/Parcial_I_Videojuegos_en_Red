@@ -14,11 +14,20 @@ public class HealthManager : MonoBehaviourPun
 
     void Start()
     {
-        //rpc init health
+        if (!photonView.IsMine)
+        {
+            Destroy(this);
+        }
+        photonView.RPC("SetStartingHealth", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void SetStartingHealth() 
+    {
         currentHealth = maxHealth;
     }
 
-    //rpctake damage
+    [PunRPC]
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
@@ -26,10 +35,16 @@ public class HealthManager : MonoBehaviourPun
         if (currentHealth <= 0)
         {
             //death
-            Destroy(gameObject);
+            photonView.RPC("Kill", PhotonNetwork.LocalPlayer);
         }
 
         float currentHealthPct = (float)currentHealth / (float)maxHealth;
         OnHealthPctChanged(currentHealthPct);
+    }
+
+    [PunRPC]
+    void Kill()
+    {
+        PhotonNetwork.Destroy(gameObject);
     }
 }

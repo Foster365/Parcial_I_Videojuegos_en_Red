@@ -551,7 +551,6 @@ GameObject:
   - component: {fileID: 1915268175329806938}
   - component: {fileID: -1701034115972614323}
   - component: {fileID: 1383991298}
-  - component: {fileID: 1841993205975113905}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -703,7 +702,6 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 5176900862654542046}
   - {fileID: 7695475593610396724}
-  - {fileID: 1841993205975113905}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -816,30 +814,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 1761356274}
-  bulletPrefab: {fileID: 5038965893795230273, guid: bacfb8f74c6962742bc92e93d6f68b9b, type: 3}
   anim: {fileID: 1915268175329806938}
   bulletForce: 20
---- !u!114 &1841993205975113905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4151423785257223336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowLayerWeightsInspector: 1
-  ShowParameterInspector: 1
-  m_SynchronizeParameters:
-  - Type: 4
-    SynchronizeType: 0
-    Name: Punch
-  m_SynchronizeLayers:
-  - SynchronizeType: 0
-    LayerIndex: 0
 --- !u!1 &4151423785308113909
 GameObject:
   m_ObjectHideFlags: 0
