@@ -1,17 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using TMPro;
-
 using Photon.Pun;
 using Photon.Realtime;
-using System;
+using System.Collections;
+using TMPro;
+using UnityEngine;
 
 public class WaveSpawner : MonoBehaviourPun
 {
 
-    public enum SpawnState { SPAWNING, WAITING, COUNTING}
+    public enum SpawnState { SPAWNING, WAITING, COUNTING }
 
     [System.Serializable]
     public class Wave
@@ -42,7 +38,7 @@ public class WaveSpawner : MonoBehaviourPun
     private SpawnState state = SpawnState.COUNTING;
     void Start()
     {
-        if(PhotonNetwork.PlayerList.Length == 3) isWaveOn = true;
+        if (PhotonNetwork.PlayerList.Length == 3) isWaveOn = true;
         waveCountdown = timeBetweenWaves;
         wavesLeft = waves.Length;
 
@@ -88,6 +84,7 @@ public class WaveSpawner : MonoBehaviourPun
         {
             //nextWave = 0;
             isWavesCompleted = true;
+
             Debug.Log("All waves complete");
         }
         else
@@ -100,6 +97,7 @@ public class WaveSpawner : MonoBehaviourPun
     void SetWaveCompleted()
     {
         nextWave++;
+        Debug.Log("Next wave: " + nextWave);
     }
 
     [PunRPC]
@@ -144,7 +142,7 @@ public class WaveSpawner : MonoBehaviourPun
         photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
         //if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
         Debug.Log("Spawnpoint: " + currSpawnpoint);
-        
+
     }
 
     [PunRPC]

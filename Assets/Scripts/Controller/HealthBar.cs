@@ -18,15 +18,9 @@ public class HealthBar : MonoBehaviourPun
 
     private void Awake()
     {
-        if(!photonView.IsMine)Destroy(this);
         healthImage.enabled = true;
         gameObject.SetActive(true);
         GetComponentInParent<HealthManager>().OnHealthPctChanged += HandleHealthChanged;
-        //if(photonView.IsMine)
-        //{
-        //    photonView.RPC("SetUIHealthBar", RpcTarget.All);
-        //}
-        //if (!photonView.IsMine) Destroy(this);
     }
 
     [PunRPC]
@@ -53,8 +47,10 @@ public class HealthBar : MonoBehaviourPun
 
     private IEnumerator ChangeToPct(float pct)
     {
-        if(photonView.IsMine && healthImage.IsActive())
+        if(healthImage.IsActive())
         {
+            Debug.Log("ESTÁ ACTIVO!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            Debug.Log("Active? " + gameObject.activeInHierarchy);
             float preChangePct = healthImage.fillAmount;
             float elapsed = 0f;
 
@@ -63,7 +59,7 @@ public class HealthBar : MonoBehaviourPun
                 elapsed += Time.deltaTime;
                 uiFillAmount = Mathf.Lerp(preChangePct, pct, elapsed / updateSpeed);
                 healthImage.fillAmount = uiFillAmount;
-                //StartCoroutine(WaitToCheckUIFill(uiFillAmount));
+                StartCoroutine(WaitToCheckUIFill(uiFillAmount));
                 yield return null;
             }
 
@@ -77,10 +73,10 @@ public class HealthBar : MonoBehaviourPun
     {
         yield return new WaitForSeconds(2f);
 
-        //photonView.RPC("CheckUIFill", RpcTarget.All, _fillAmount);
+        photonView.RPC("CheckUIFill", RpcTarget.All, _fillAmount);
     }
 
-    //[PunRPC]
+    [PunRPC]
     void CheckUIFill(float _fillAmount)
     {
         healthImage.fillAmount = _fillAmount;

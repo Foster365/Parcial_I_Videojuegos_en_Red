@@ -20,7 +20,7 @@ public class HealthManager : MonoBehaviourPun
         {
             Destroy(this);
         }
-        photonView.RPC("SetStartingHealth", RpcTarget.All);
+        photonView.RPC("SetStartingHealth", PhotonNetwork.LocalPlayer);
     }
 
     [PunRPC]
