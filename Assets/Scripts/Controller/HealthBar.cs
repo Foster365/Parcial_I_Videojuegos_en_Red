@@ -53,7 +53,7 @@ public class HealthBar : MonoBehaviourPun
 
     private IEnumerator ChangeToPct(float pct)
     {
-        if(photonView.IsMine)
+        if(photonView.IsMine && healthImage.IsActive())
         {
             float preChangePct = healthImage.fillAmount;
             float elapsed = 0f;
