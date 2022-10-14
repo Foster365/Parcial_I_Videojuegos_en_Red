@@ -10,46 +10,61 @@ public class Bullet : MonoBehaviourPun
     public float rotateSpeed;
     public int bulletDmg;
     HealthManager healthManager;
+
     private void Update()
     {
-        rotate();
+        if(photonView.IsMine) rotate();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.tag == "Enemy")
-        {
-            var healthComponent = collision.collider.GetComponent<HealthManager>();
-            if (healthComponent != null)
+        //if(photonView.IsMine)
+        //{
+            if (collision.collider.tag == "Enemy")
             {
-                photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
+                var healthComponent = collision.collider.GetComponent<HealthManager>();
+                if (healthComponent != null)
+                {
+                    photonView.RPC("TakeDamage", photonView.Owner, bulletDmg);
+                }
+                photonView.RPC("DestroyBullet", photonView.Owner);
             }
-            PhotonNetwork.Destroy(gameObject);
-        }
-        else
-        {
-          PhotonNetwork.Destroy(gameObject);
-        }
+            else
+            {
+                photonView.RPC("DestroyBullet", photonView.Owner);
+            }
 
+        //}
+    }
+
+    [PunRPC]
+    void DestroyEnemy()
+    {
+
+        PhotonNetwork.Destroy(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Enemy")
-        {
-            var healthComponent = other.GetComponent<HealthManager>();
-            if (healthComponent != null)
-            {
-                healthManager = healthComponent;
-                photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
-            }
-            photonView.RPC("DestroyBullet", PhotonNetwork.LocalPlayer);
-        }
-        else
-        {
-            photonView.RPC("DestroyBullet", PhotonNetwork.LocalPlayer); 
-        }
+        //if(photonView.IsMine)
+        //{
 
+            if (other.tag == "Enemy")
+            {
+                var healthComponent = other.GetComponent<HealthManager>();
+                if (healthComponent != null)
+                {
+                    healthManager = healthComponent;
+                    photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
+                }
+                photonView.RPC("DestroyBullet", photonView.Owner);
+            }
+            else
+            {
+                photonView.RPC("DestroyBullet", photonView.Owner);
+            }
+
+        //}
     }
 
     [PunRPC]

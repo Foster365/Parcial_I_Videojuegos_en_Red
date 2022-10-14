@@ -10,18 +10,30 @@ public class HealthUpScript : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.tag != "Enemy")
+        if (collision.gameObject.tag == TagManager.PLAYER_TAG)
         {
             var healthComponent = collision.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
                 hm = healthComponent;
-                photonView.RPC("Heal", PhotonNetwork.LocalPlayer, healAmount);
+                photonView.RPC("Heal", PhotonNetwork.LocalPlayer);
                 //healthComponent.TakeDamage(-1);
                 //Destroy(gameObject);
             }
-            PhotonNetwork.Destroy(gameObject);
+            photonView.RPC("DestroyBottle", photonView.Owner);
         }
+        else
+        {
+            photonView.RPC("DestroyBottle", photonView.Owner);
+        }
+
+        //}
+    }
+
+    [PunRPC]
+    void DestroyBottle()
+    {
+        PhotonNetwork.Destroy(this.gameObject);
     }
 
     [PunRPC]
