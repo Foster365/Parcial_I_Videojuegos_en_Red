@@ -42,7 +42,7 @@ public class WaveSpawner : MonoBehaviourPun
     private SpawnState state = SpawnState.COUNTING;
     void Start()
     {
-        if(PhotonNetwork.PlayerList.Length == 2) isWaveOn = true;
+        if(PhotonNetwork.PlayerList.Length == 3) isWaveOn = true;
         waveCountdown = timeBetweenWaves;
         wavesLeft = waves.Length;
 
@@ -159,7 +159,7 @@ public class WaveSpawner : MonoBehaviourPun
     [PunRPC]
     void SpawnEnemy(int _spawnPointIndex)
     {
-        PhotonNetwork.Instantiate("Enemy2", spawnPoints[_spawnPointIndex].position, spawnPoints[_spawnPointIndex].rotation);
+        PhotonNetwork.Instantiate("Enemy", spawnPoints[_spawnPointIndex].position, spawnPoints[_spawnPointIndex].rotation);
     }
 
     int SetEnemyRandomSP()
