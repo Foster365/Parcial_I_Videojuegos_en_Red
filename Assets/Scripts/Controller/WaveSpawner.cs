@@ -58,8 +58,7 @@ public class WaveSpawner : MonoBehaviourPun
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && state != SpawnState.SPAWNING)
             {
-                photonView.RPC("HandleWaveSpawning", RpcTarget.All);
-                Debug.Log("Changing state to spawning");
+                if (!photonView.IsMine) HandleWaveSpawning();
             }
         }
         else
@@ -118,7 +117,7 @@ public class WaveSpawner : MonoBehaviourPun
         for (int i = 0; i < _wave.count; i++)
         {
             //photonView.RPC("SpawnEnemy", RpcTarget.All);//, _wave.enemy);
-            SpawnEnemy();
+            HandleEnemySpawn();
             yield return new WaitForSeconds(1f / _wave.spawnRate);
         }
 
@@ -127,13 +126,13 @@ public class WaveSpawner : MonoBehaviourPun
         yield break;
     }
 
-    void SpawnEnemy()//(Transform _enemy)
+    void HandleEnemySpawn()//(Transform _enemy)
     {
 
         if (!photonView.IsMine)
         {
             photonView.RPC("RequestSpawnPoint", PhotonNetwork.MasterClient, PhotonNetwork.LocalPlayer);
-            if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
+            //if (currSpawnpoint != null) PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
             Debug.Log("Spawnpoint: " + currSpawnpoint);
         }
     }
@@ -145,7 +144,13 @@ public class WaveSpawner : MonoBehaviourPun
     }
 
     [PunRPC]
-    Transform SetEnemyRandomSP()
+    void SpawnEnemy(Player client)
+    {
+
+    }
+
+    [PunRPC]
+    void SetEnemyRandomSP(Player client)
     {
 
         List<Transform> list = new List<Transform>();
@@ -160,11 +165,14 @@ public class WaveSpawner : MonoBehaviourPun
             int index = UnityEngine.Random.Range(0, list.Count - 1);
             currSpawnpoint = list[index];
 
-        }
-        else photonView.RPC("DestroyEnemy", RpcTarget.All);
+            PhotonNetwork.Instantiate("Enemy", currSpawnpoint.position, Quaternion.identity);
 
-        return currSpawnpoint;
+        }
+
+        //return currSpawnpoint;
     }
+
+
 
     [PunRPC]
     void DestroyEnemy()

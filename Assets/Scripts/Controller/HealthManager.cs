@@ -14,9 +14,11 @@ public class HealthManager : MonoBehaviourPun
 
     void Start()
     {
+        //rpc init health
         currentHealth = maxHealth;
     }
 
+    //rpctake damage
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;

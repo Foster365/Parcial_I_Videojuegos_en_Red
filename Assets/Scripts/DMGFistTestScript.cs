@@ -11,7 +11,7 @@ public class DMGFistTestScript : MonoBehaviour
             var healthComponent = collision.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
-                healthComponent.TakeDamage(5);
+                //rpc daño healthComponent.TakeDamage(5);
             }
         }
     }
