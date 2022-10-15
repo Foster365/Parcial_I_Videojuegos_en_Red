@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WaveSpawner : MonoBehaviourPun
 {
@@ -19,7 +20,7 @@ public class WaveSpawner : MonoBehaviourPun
     }
 
     public Wave[] waves;
-    private int nextWave = 0;
+    public int nextWave = 0;
 
     public Transform[] spawnPoints;
     Transform currSpawnpoint;
@@ -30,7 +31,8 @@ public class WaveSpawner : MonoBehaviourPun
     private float searchCountdown = 1f;
     public bool isWavesCompleted = false;
     [SerializeField] TextMeshProUGUI wavesLeftText;
-    int wavesLeft;
+    public int wavesLeft;
+    public int playersCount = 0;
     bool isWaveOn = false;
 
     CharacterModel characterTarget;
@@ -46,6 +48,8 @@ public class WaveSpawner : MonoBehaviourPun
 
     void Update()
     {
+        playersCount = PhotonNetwork.PlayerList.Length;
+        Debug.Log("WAVES CURR: " + nextWave);
         wavesLeft = waves.Length - nextWave;
         wavesLeftText.text = "Waves left: " + wavesLeft + "/" + waves.Length;
         if (state == SpawnState.WAITING)
@@ -74,12 +78,36 @@ public class WaveSpawner : MonoBehaviourPun
         }
     }
 
+    public void HandleWin()
+    {
+        photonView.RPC("WinGame", RpcTarget.All);
+    }
+
+    public void HandleWavesCounter(int _waves)
+    {
+        photonView.RPC("WavesLeft", RpcTarget.All, _waves);
+    }
+
+    [PunRPC]
+    void WavesLeft(int _index)
+    {
+        wavesLeft = _index;
+        Debug.Log("Waves left: " + wavesLeft);
+    }
+
+
+    [PunRPC]
+    void WinGame()
+    {
+        SceneManager.LoadScene("Win");
+    }
+
     [PunRPC]
     void WaveCompleted()
     {
         state = SpawnState.COUNTING;
         waveCountdown = timeBetweenWaves;
-
+        Debug.Log("Wave was completed!!!");
         if (nextWave + 1 > waves.Length - 1)
         {
             //nextWave = 0;
@@ -89,6 +117,7 @@ public class WaveSpawner : MonoBehaviourPun
         }
         else
         {
+            Debug.Log("PASA");
             photonView.RPC("SetWaveCompleted", RpcTarget.All);
         }
     }
@@ -103,7 +132,7 @@ public class WaveSpawner : MonoBehaviourPun
     [PunRPC]
     void HandleWaveSpawning()
     {
-        StartCoroutine(SpawnWave(waves[nextWave]));
+        if(nextWave >=0 && nextWave < waves.Length) StartCoroutine(SpawnWave(waves[nextWave]));
     }
 
     bool EnemyIsAlive()
@@ -114,9 +143,11 @@ public class WaveSpawner : MonoBehaviourPun
             searchCountdown = 1f;
             if (GameObject.FindWithTag("Enemy") == null)
             {
+                Debug.Log("Hay enemigos vivos");
                 return false;
             }
         }
+        Debug.Log("No hay enemigos vivos");
         return true;
     }
 
@@ -136,6 +167,10 @@ public class WaveSpawner : MonoBehaviourPun
         yield break;
     }
 
+    public void HandleSpawnWave(Wave _wave)
+    {
+        StartCoroutine(SpawnWave(_wave));
+    }
     void HandleEnemySpawn()//(Transform _enemy)
     {
 

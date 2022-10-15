@@ -38,7 +38,7 @@ public class HealthManager : MonoBehaviourPun
         {
             //death
             isDead = true;
-            photonView.RPC("Kill", PhotonNetwork.LocalPlayer);
+            photonView.RPC("Kill", photonView.Owner);
         }
 
         float currentHealthPct = (float)currentHealth / (float)maxHealth;
