@@ -5,16 +5,15 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class BananaEnemyScript : MonoBehaviourPun
+public class BananaEnemyScript : Bullet
 {
-    public float rotateSpeed;
-    public int bulletDmg;
+
     HealthManager healthManager;
     private void Update()
     {
-        rotate();
+        if (photonView.IsMine) rotate();
     }
-
+    
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.tag == "Player")

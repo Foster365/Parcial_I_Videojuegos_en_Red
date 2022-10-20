@@ -11,11 +11,6 @@ public class Bullet : MonoBehaviourPun
     public int bulletDmg;
     HealthManager healthManager;
 
-    private void Update()
-    {
-        if(photonView.IsMine) rotate();
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         //if(photonView.IsMine)
@@ -46,8 +41,8 @@ public class Bullet : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        //if(photonView.IsMine)
-        //{
+        if (photonView.IsMine)
+        {
 
             if (other.tag == "Enemy")
             {
@@ -57,14 +52,11 @@ public class Bullet : MonoBehaviourPun
                     healthManager = healthComponent;
                     photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
                 }
-                photonView.RPC("DestroyBullet", photonView.Owner);
+                photonView.RPC("DestroyBullet", RpcTarget.All);
             }
-            else
-            {
-                photonView.RPC("DestroyBullet", photonView.Owner);
-            }
+            else photonView.RPC("DestroyBullet", RpcTarget.All);
 
-        //}
+        }
     }
 
     [PunRPC]

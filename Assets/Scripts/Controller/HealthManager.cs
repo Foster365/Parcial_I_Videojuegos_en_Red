@@ -8,19 +8,19 @@ using Photon.Realtime;
 public class HealthManager : MonoBehaviourPun
 {
     public int maxHealth = 3;
-    public int currentHealth;
+    int currentHealth;
 
-    public bool isDead = false;
+    bool isDead = false;
+
+    public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public bool IsDead { get => isDead; set => isDead = value; }
 
     public event Action<float> OnHealthPctChanged = delegate { };
 
     void Start()
     {
-        if (!photonView.IsMine)
-        {
-            Destroy(this);
-        }
-        photonView.RPC("SetStartingHealth", PhotonNetwork.LocalPlayer);
+        if (!photonView.IsMine) Destroy(this);
+        photonView.RPC("SetStartingHealth", RpcTarget.All);
     }
 
     [PunRPC]
@@ -32,17 +32,20 @@ public class HealthManager : MonoBehaviourPun
     [PunRPC]
     public void TakeDamage(int amount)
     {
-        currentHealth -= amount;
-        Debug.Log(gameObject.name + "Health: " + currentHealth);
-        if (currentHealth <= 0)
+        if(photonView.IsMine)
         {
-            //death
-            isDead = true;
-            photonView.RPC("Kill", photonView.Owner);
-        }
+            currentHealth -= amount;
+            Debug.Log(gameObject.name + "Health: " + currentHealth);
+            if (currentHealth <= 0)
+            {
+                //death
+                isDead = true;
+                photonView.RPC("Kill", RpcTarget.All);
+            }
 
-        float currentHealthPct = (float)currentHealth / (float)maxHealth;
-        OnHealthPctChanged(currentHealthPct);
+            float currentHealthPct = (float)currentHealth / (float)maxHealth;
+            OnHealthPctChanged(currentHealthPct);
+        }
     }
 
     [PunRPC]

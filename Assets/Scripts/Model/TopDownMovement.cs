@@ -42,14 +42,14 @@ public class TopDownMovement : MonoBehaviourPun
     {
         if (photonView.IsMine)
         {
-        Ray ray = camera.ScreenPointToRay(input.MousePosition);
+            Ray ray = camera.ScreenPointToRay(input.MousePosition);
 
-        if(Physics.Raycast(ray, out RaycastHit hitInfo, maxDistance: 300f))
-        {
-            var target = hitInfo.point;
-            target.y = transform.position.y;
-            transform.LookAt(target);
-        }
+            if(Physics.Raycast(ray, out RaycastHit hitInfo, maxDistance: 300f))
+            {
+                var target = hitInfo.point;
+                target.y = transform.position.y;
+                transform.LookAt(target);
+            }
         }
     }
 
