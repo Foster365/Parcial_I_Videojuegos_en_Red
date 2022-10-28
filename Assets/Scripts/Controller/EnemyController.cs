@@ -34,12 +34,11 @@ public class EnemyController : MonoBehaviourPun
 
     void OnDrawGizmosSelected()
     {
-        if(photonView.IsMine)
-        {
+
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, enemyModel.attackRange);
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, enemyModel.sightRange);
-        }
+        
     }
 }

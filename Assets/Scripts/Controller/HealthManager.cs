@@ -19,12 +19,31 @@ public class HealthManager : MonoBehaviourPun
 
     void Start()
     {
-        if (!photonView.IsMine) Destroy(this);
-        photonView.RPC("SetStartingHealth", RpcTarget.All);
+        if (photonView.IsMine)
+        {
+            SetStartingHealth();
+        }
+        else
+        {
+            photonView.RPC("RequestCurrentHealth", photonView.Owner, PhotonNetwork.LocalPlayer);
+        }
     }
 
     [PunRPC]
-    void SetStartingHealth() 
+    public void RequestCurrentHealth(Player client)
+    {
+        photonView.RPC("UpdateHealth", client, currentHealth);
+    }
+
+    [PunRPC]
+    public void UpdateHealth(int life)
+    {
+        currentHealth = life;
+        float currentHealthPct = (float)currentHealth / (float)maxHealth;
+        OnHealthPctChanged(currentHealthPct);
+    }
+
+    void SetStartingHealth()
     {
         currentHealth = maxHealth;
     }
@@ -32,7 +51,7 @@ public class HealthManager : MonoBehaviourPun
     [PunRPC]
     public void TakeDamage(int amount)
     {
-        if(photonView.IsMine)
+        if (photonView.IsMine)
         {
             currentHealth -= amount;
             Debug.Log(gameObject.name + "Health: " + currentHealth);
@@ -40,15 +59,18 @@ public class HealthManager : MonoBehaviourPun
             {
                 //death
                 isDead = true;
-                photonView.RPC("Kill", RpcTarget.All);
+                Kill();
             }
-
-            float currentHealthPct = (float)currentHealth / (float)maxHealth;
-            OnHealthPctChanged(currentHealthPct);
+            photonView.RPC("UpdateHealth", RpcTarget.All, currentHealth);
+            //float currentHealthPct = (float)currentHealth / (float)maxHealth;
+            //OnHealthPctChanged(currentHealthPct);
+        }
+        else
+        {
+            photonView.RPC("TakeDamage", photonView.Owner, amount);
         }
     }
 
-    [PunRPC]
     void Kill()
     {
         PhotonNetwork.Destroy(this.gameObject);

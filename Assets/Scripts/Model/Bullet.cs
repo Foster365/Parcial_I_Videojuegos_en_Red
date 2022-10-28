@@ -15,19 +15,19 @@ public class Bullet : MonoBehaviourPun
     {
         //if(photonView.IsMine)
         //{
-            if (collision.collider.tag == "Enemy")
+        if (collision.collider.tag == "Enemy")
+        {
+            var healthComponent = collision.collider.GetComponent<HealthManager>();
+            if (healthComponent != null)
             {
-                var healthComponent = collision.collider.GetComponent<HealthManager>();
-                if (healthComponent != null)
-                {
-                    photonView.RPC("TakeDamage", photonView.Owner, bulletDmg);
-                }
-                photonView.RPC("DestroyBullet", photonView.Owner);
+                photonView.RPC("TakeDamage", photonView.Owner, bulletDmg);
             }
-            else
-            {
-                photonView.RPC("DestroyBullet", photonView.Owner);
-            }
+            photonView.RPC("DestroyBullet", photonView.Owner);
+        }
+        else
+        {
+            photonView.RPC("DestroyBullet", photonView.Owner);
+        }
 
         //}
     }
@@ -50,16 +50,16 @@ public class Bullet : MonoBehaviourPun
                 if (healthComponent != null)
                 {
                     healthManager = healthComponent;
-                    photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
+                    healthManager.TakeDamage(bulletDmg);
+                    // photonView.RPC("TakeDamage", PhotonNetwork.LocalPlayer, bulletDmg);
                 }
-                photonView.RPC("DestroyBullet", RpcTarget.All);
+                DestroyBullet();
             }
-            else photonView.RPC("DestroyBullet", RpcTarget.All);
+            else DestroyBullet();
 
         }
     }
 
-    [PunRPC]
     void DestroyBullet()
     {
         PhotonNetwork.Destroy(this.gameObject);
@@ -68,7 +68,7 @@ public class Bullet : MonoBehaviourPun
     [PunRPC]
     void TakeDamage(int damage)
     {
-        if(healthManager != null)healthManager.TakeDamage(damage);
+        if (healthManager != null) healthManager.TakeDamage(damage);
     }
 
     void rotate()
