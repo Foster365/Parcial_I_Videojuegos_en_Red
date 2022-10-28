@@ -38,6 +38,7 @@ public class EnemyModel : MonoBehaviourPun
     // Start is called before the first frame update
     void Awake()
     {
+        if(!photonView.IsMine) Destroy(this);
         healthMgr = GetComponent<HealthManager>();
     }
 

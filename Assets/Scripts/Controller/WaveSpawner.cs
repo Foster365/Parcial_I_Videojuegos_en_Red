@@ -40,7 +40,7 @@ public class WaveSpawner : MonoBehaviourPun
     private SpawnState state = SpawnState.COUNTING;
     void Start()
     {
-        if (PhotonNetwork.PlayerList.Length == 3) isWaveOn = true;
+        if (PhotonNetwork.PlayerList.Length == 1) isWaveOn = true;
         waveCountdown = timeBetweenWaves;
         wavesLeft = waves.Length;
 

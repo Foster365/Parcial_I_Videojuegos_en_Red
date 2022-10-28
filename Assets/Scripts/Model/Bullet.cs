@@ -20,13 +20,13 @@ public class Bullet : MonoBehaviourPun
             var healthComponent = collision.collider.GetComponent<HealthManager>();
             if (healthComponent != null)
             {
-                photonView.RPC("TakeDamage", photonView.Owner, bulletDmg);
+                photonView.RPC("TakeDamage", RpcTarget.All, bulletDmg);
             }
-            photonView.RPC("DestroyBullet", photonView.Owner);
+            DestroyBullet();
         }
         else
         {
-            photonView.RPC("DestroyBullet", photonView.Owner);
+            DestroyBullet();
         }
 
         //}
