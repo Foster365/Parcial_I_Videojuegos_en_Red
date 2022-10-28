@@ -22,7 +22,7 @@ public class EnemyController : MonoBehaviourPun
 
     private void Update()
     {
-        if(enemyModel.characters != null)
+        if(enemyModel.characters != null) 
         {
 
             if (!enemyModel.IsPlayerInSightRange() && !enemyModel.IsPlayerInAttackRange()) enemyModel.Patrolling();
