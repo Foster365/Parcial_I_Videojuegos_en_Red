@@ -1,9 +1,8 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using Photon.Pun;
-using Photon.Realtime;
 
 public class BananaEnemyScript : Bullet
 {
@@ -13,9 +12,11 @@ public class BananaEnemyScript : Bullet
     {
         if (photonView.IsMine) rotate();
     }
-    
+
+    //No deberìa tener los dos tipos de colisiones. Dejar solamente el trigger, y pasar por string el tag del target. Para no tener que repetir el còdigo
     private void OnCollisionEnter(Collision collision)
     {
+        //if(photonView.Ismine)
         if (collision.collider.tag == "Player")
         {
             var healthComponent = collision.collider.GetComponent<HealthManager>();
@@ -29,7 +30,7 @@ public class BananaEnemyScript : Bullet
         {
             PhotonNetwork.Destroy(gameObject);
         }
-
+        //
     }
 
     private void OnTriggerEnter(Collider other)
@@ -58,7 +59,7 @@ public class BananaEnemyScript : Bullet
     }
 
     [PunRPC]
-    void TakeDamage(int damage)
+    void TakeDamage(int damage) //Usar el mètodo del healthcontroller. De ser necesario acceder al photonView del healthmanager (healthManager.photonView.RPC("",,);
     {
         if (healthManager != null) healthManager.TakeDamage(damage);
     }

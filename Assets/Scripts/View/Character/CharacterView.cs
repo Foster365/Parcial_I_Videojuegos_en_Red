@@ -1,17 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
-
-using UnityEngine;
-
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class CharacterView : MonoBehaviourPun
 {
-    [SerializeField]PlayerNickname playerNickPrefab;
+    [SerializeField] PlayerNickname playerNickPrefab;
     PlayerNickname playerNick;
     [SerializeField] bool isDead = false;
+    public Animator anim;
 
+
+    private void Awake()
+    {
+        if (!photonView.IsMine) Destroy(this);
+        anim.gameObject.GetComponent<Animator>();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +24,7 @@ public class CharacterView : MonoBehaviourPun
         playerNick = GameObject.Instantiate(playerNickPrefab, gameCanvas.transform);
         playerNick.SetTarget(transform);
 
-        if(photonView.IsMine)
+        if (photonView.IsMine)
         {
             var nick = photonView.Owner.NickName;
             UpdateNick(nick);
@@ -29,12 +34,13 @@ public class CharacterView : MonoBehaviourPun
     private void Update()
     {
         if (isDead) OnDestroyNick();
+        else if (Input.GetKeyDown(KeyCode.Q)) anim.SetBool("Punch", true);
     }
 
     [PunRPC]
     void UpdateNick(string nickName)
     {
-        if(playerNick != null) playerNick.SetName(nickName);
+        if (playerNick != null) playerNick.SetName(nickName);
     }
 
     [PunRPC]

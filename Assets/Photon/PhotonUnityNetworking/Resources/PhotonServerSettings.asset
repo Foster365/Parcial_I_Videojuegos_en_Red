@@ -81,6 +81,8 @@ MonoBehaviour:
   - DestroyBottle
   - WinGame
   - WavesLeft
+  - RequestCurrentHealth
+  - UpdateHealth
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

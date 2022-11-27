@@ -1,10 +1,9 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
-using Photon.Pun;
-using Photon.Realtime;
 
 public class EnemyLongRangeAi : MonoBehaviourPun
 {
@@ -94,55 +93,19 @@ public class EnemyLongRangeAi : MonoBehaviourPun
         {
             agent.SetDestination(characters[targetIndex].transform.position);
         }
-
-        //var listCharacters = new List<CharacterModel>();
-
-        //for (int i = 0; i < characters.Length; i++)
-        //{
-        //    var curr = characters[i];
-        //    if (curr == characterTarget) continue;
-        //    listCharacters.Add(curr);
-        //}
-        //if (listCharacters.Count > 1) //Pruebo con 1, sino bajo el range del random.range
-        //{
-        //    SetTarget(listCharacters[index]);
-        //}
-        //else PhotonNetwork.Destroy(this.gameObject);
-
-        //Debug.Log("Character in index: " + characters[index]);
-
     }
 
     [PunRPC]
     void RequestTargetIndex(Player client)
     {
-
-        /*int index = Random.Range(0, characters.Length-1);*/
         if (characters == null) Debug.Log("Characters es null");
-        //characterTarget = characters[index];
         photonView.RPC("SetEnemyTargetIndex", client, UnityEngine.Random.Range(0, characters.Length));
-
     }
 
     void SetEnemyTargetIndex(int _index)
     {
         targetIndex = _index;
-        //agent.SetDestination(_target.transform.position);
     }
-
-    //void SetTarget(CharacterModel characterTgt)
-    //{
-    //    characterTarget = characterTgt;
-    //    photonView.RPC("UpdateTarget", RpcTarget.Others, characterTgt.photonView.ViewID);
-    //}
-
-    //[PunRPC]
-    //void UpdateTarget(int id)
-    //{
-    //    PhotonView view = PhotonView.Find(id);
-    //    if (view != null) characterTarget = view.gameObject.GetComponent<CharacterModel>();
-    //    agent.SetDestination(characterTarget.transform.position);
-    //}
 
     private void AttackPlayer()
     {
