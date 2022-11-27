@@ -10,6 +10,7 @@ public class CharacterView : MonoBehaviourPun
 {
     [SerializeField]PlayerNickname playerNickPrefab;
     PlayerNickname playerNick;
+    [SerializeField] bool isDead = false;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +18,6 @@ public class CharacterView : MonoBehaviourPun
         var gameCanvas = GameObject.Find("Canvas");
         playerNick = GameObject.Instantiate(playerNickPrefab, gameCanvas.transform);
         playerNick.SetTarget(transform);
-        Debug.Log("Prefs: " + PlayerPrefs.GetString(InputFieldHandler.playerNamePrefKey));
 
         if(photonView.IsMine)
         {
@@ -25,6 +25,10 @@ public class CharacterView : MonoBehaviourPun
             UpdateNick(nick);
         }
         else photonView.RPC("RequestNick", photonView.Owner, PhotonNetwork.LocalPlayer);
+    }
+    private void Update()
+    {
+        if (isDead) OnDestroyNick();
     }
 
     [PunRPC]
@@ -40,6 +44,6 @@ public class CharacterView : MonoBehaviourPun
     }
     void OnDestroyNick()
     {
-        Destroy(playerNick.gameObject);
+        PhotonNetwork.Destroy(playerNick.gameObject);
     }
 }

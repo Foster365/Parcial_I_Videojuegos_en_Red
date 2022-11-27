@@ -9,13 +9,15 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using Photon.Pun.Demo.Cockpit;
 using static LevelsManager;
 
-public class GameManager : MonoBehaviourPun
+public class GameManager : MonoBehaviourPunCallbacks
 {
 
     Instantiator gameInstantiator;
     LevelsManager levelManager;
+    WaveSpawner waveSpawner;
     [SerializeField] TextMeshProUGUI gameStartTimer;
     [SerializeField] TextMeshProUGUI gameTimer;
     float timeLeft = 200;
@@ -29,28 +31,22 @@ public class GameManager : MonoBehaviourPun
 
     public GameManager GameManagerInstance { get; private set; }
 
-    void HandleSingleton()
-    {
-        if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
-        else GameManagerInstance = this;
-
-    }
-
     #endregion;
 
     private void Awake()
     {
-
-        HandleSingleton();
+        if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
+        else GameManagerInstance = this;
         gameInstantiator = GetComponent<Instantiator>();
     }
     private void Start()
     {
         levelManager = GameObject.FindWithTag(TagManager.LEVELS_MANAGER_TAG).gameObject.GetComponent<LevelsManager>();
+        waveSpawner = GameObject.FindWithTag("GM").gameObject.GetComponent<WaveSpawner>();
         gameTimer.enabled = false;
         gameStartTimer.enabled = false;
         gameInstantiator.HandlePlayerSpawning();
-        if (PhotonNetwork.PlayerList.Length == 2) photonView.RPC("StartGameInitCountdown", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length == 3) photonView.RPC("StartGameInitCountdown", RpcTarget.All);
         //if (photonView.IsMine) UpdateGameTimer();
         //photonView.RPC("StartGameTimer", RpcTarget.All);
         gameTimer.text = timeLeft.ToString();
@@ -59,8 +55,18 @@ public class GameManager : MonoBehaviourPun
     private void Update()
     {
         if (isGameOn) UpdateGameTimer();//photonView.RPC("UpdateGameTimer", RpcTarget.All);
+        CheckPlayerDisconnected();
         CheckVictory();
         CheckDefeat();
+    }
+
+    void CheckPlayerDisconnected()
+    {
+        if (!PhotonNetwork.InRoom && !PhotonNetwork.IsConnected)
+        {
+            Debug.Log("Quitting");
+            Application.Quit();
+        }
     }
 
     [PunRPC]
@@ -78,6 +84,7 @@ public class GameManager : MonoBehaviourPun
             yield return new WaitForSeconds(1f);
             initTimer--;
         }
+        isGameOn = true;
         gameStartTimer.text = "Game starts!";
         StartCoroutine(WaitToStartCoroutine());
     }
@@ -89,11 +96,14 @@ public class GameManager : MonoBehaviourPun
         StartGameTest();
     }
 
+    IEnumerator WaitToSync()
+    {
+        yield return new WaitForSeconds(2);
+    }
+
     void StartGameTest()
     {
-
         photonView.RPC("SetGameOnBoolean", RpcTarget.All, true);
-        Debug.Log("Game begins");
     }
     [PunRPC]
     bool SetGameOnBoolean(bool isOn)
@@ -128,13 +138,13 @@ public class GameManager : MonoBehaviourPun
     void CheckVictory()
     {
 
-        if (isVictory) photonView.RPC("LoadWinScene", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length > 0 && waveSpawner.isWavesCompleted) photonView.RPC("LoadWinScene", RpcTarget.All);
     }
 
     void CheckDefeat()
     {
 
-        if (isDefeat) photonView.RPC("LoadGameOverScene", RpcTarget.All);
+        if (PhotonNetwork.PlayerList.Length == 0 || timeLeft <= 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
     }
 
     [PunRPC]

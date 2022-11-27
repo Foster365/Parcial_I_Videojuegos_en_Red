@@ -49,6 +49,38 @@ MonoBehaviour:
   - StartGameInitCountdown
   - RequestNick
   - UpdateNick
+  - SpawnEnemy
+  - HandleSpawnWaveState
+  - SetNewWave
+  - WaveCompleted
+  - AttackPlayer
+  - ChasePlayer
+  - UpdateTarget
+  - Patrolling
+  - HandleWaveSpawning
+  - SetWaveCompleted
+  - SetEnemySP
+  - SetEnemyRandomSP
+  - DestroyEnemy
+  - RequestSpawnPoint
+  - RequestRandomTarget
+  - SetRandomTarget
+  - Kill
+  - SetStartingHealth
+  - Shoot
+  - TakeDamage
+  - RequestTarget
+  - SetEnemyTarget
+  - RequestTargetIndex
+  - SetEnemyTargetIndex
+  - CheckUIFill
+  - SetUIHealthBar
+  - DestroyBullet
+  - OnTriggerEnter
+  - Heal
+  - DestroyBottle
+  - WinGame
+  - WavesLeft
   DisableAutoOpenWizard: 1
-  ShowSettings: 1
+  ShowSettings: 0
   DevRegionSetOnce: 1

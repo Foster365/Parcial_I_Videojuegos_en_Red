@@ -4,17 +4,18 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - SpawnPoint
-  - Levels_Manager
+  - Enemy
+  - Floor
+  - GM
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - WhatIsGround
   - Water
   - UI
-  - 
-  - 
+  - WhatIsPlayer
+  - LayerTest
   - 
   - 
   - 

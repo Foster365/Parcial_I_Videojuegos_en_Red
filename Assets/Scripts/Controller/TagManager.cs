@@ -7,6 +7,9 @@ public static class TagManager
 
     #region Character_Tags
 
+    public const string PLAYER_TAG = "Player";
+    public const string ENEMY_TAG = "Enemy";
+
     #endregion
 
     #region Scene_Management_Tags
@@ -18,6 +21,7 @@ public static class TagManager
     #endregion
 
     #region Utilities_Tags
+    public const string GAME_MANAGER_TAG = "Game_Manager";
     public const string MAIN_CAMERA_TAG = "MainCamera";
     public const string SPAWNPOINT_TAG = "SpawnPoint";
     #endregion
