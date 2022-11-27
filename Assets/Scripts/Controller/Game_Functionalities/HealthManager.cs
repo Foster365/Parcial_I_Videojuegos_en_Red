@@ -1,9 +1,9 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
-using Photon.Realtime;
 
 public class HealthManager : MonoBehaviourPun
 {
@@ -15,7 +15,7 @@ public class HealthManager : MonoBehaviourPun
     public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
     public bool IsDead { get => isDead; set => isDead = value; }
 
-    public event Action<float> OnHealthPctChanged = delegate { };
+    public event Action<float> OnHealthPercentHasChanged = delegate { };
 
     void Start()
     {
@@ -40,7 +40,7 @@ public class HealthManager : MonoBehaviourPun
     {
         currentHealth = life;
         float currentHealthPct = (float)currentHealth / (float)maxHealth;
-        OnHealthPctChanged(currentHealthPct);
+        OnHealthPercentHasChanged(currentHealthPct);
     }
 
     void SetStartingHealth()
@@ -59,20 +59,21 @@ public class HealthManager : MonoBehaviourPun
             {
                 //death
                 isDead = true;
-                Kill();
+                photonView.RPC("Die", photonView.Owner);
             }
-            photonView.RPC("UpdateHealth", RpcTarget.All, currentHealth);
+            photonView.RPC("UpdateHealth", photonView.Owner, currentHealth);
             //float currentHealthPct = (float)currentHealth / (float)maxHealth;
             //OnHealthPctChanged(currentHealthPct);
         }
-        else
-        {
-            photonView.RPC("TakeDamage", photonView.Owner, amount);
-        }
+        //else
+        //{
+        //    photonView.RPC("TakeDamage", photonView.Owner, amount);
+        //}
     }
 
-    void Kill()
+    [PunRPC]
+    void Die()
     {
-        PhotonNetwork.Destroy(this.gameObject);
+        PhotonNetwork.Destroy(gameObject);
     }
 }

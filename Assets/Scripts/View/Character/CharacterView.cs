@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CharacterView : MonoBehaviourPun
 {
-    [SerializeField] PlayerNickname playerNickPrefab;
+    [SerializeField] GameObject playerNickPrefab;
     PlayerNickname playerNick;
     [SerializeField] bool isDead = false;
     public Animator anim;
@@ -21,7 +21,7 @@ public class CharacterView : MonoBehaviourPun
     void Start()
     {
         var gameCanvas = GameObject.Find("Canvas");
-        playerNick = GameObject.Instantiate(playerNickPrefab, gameCanvas.transform);
+        playerNick = GameObject.Instantiate(playerNickPrefab, gameCanvas.transform).gameObject.GetComponent<PlayerNickname>();
         playerNick.SetTarget(transform);
 
         if (photonView.IsMine)
@@ -34,7 +34,7 @@ public class CharacterView : MonoBehaviourPun
     private void Update()
     {
         if (isDead) OnDestroyNick();
-        else if (Input.GetKeyDown(KeyCode.Q)) anim.SetBool("Punch", true);
+        //else if (Input.GetKeyDown(KeyCode.Q)) anim.SetBool("Punch", true);
     }
 
     [PunRPC]

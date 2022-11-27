@@ -20,7 +20,7 @@ public class HealthBar : MonoBehaviourPun
     {
         healthImage.enabled = true;
         gameObject.SetActive(true);
-        GetComponentInParent<HealthManager>().OnHealthPctChanged += HandleHealthChanged;
+        GetComponentInParent<HealthManager>().OnHealthPercentHasChanged += HandleHealthChanged;
     }
 
     [PunRPC]

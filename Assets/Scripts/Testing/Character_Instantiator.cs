@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class Character_Instantiator : MonoBehaviourPun
 {
+    [SerializeField] Transform playerSpawnSeed;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +23,11 @@ public class Character_Instantiator : MonoBehaviourPun
 
     public void HandlePlayerInstantiation()
     {
+        Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(playerSpawnSeed.position.x, playerSpawnSeed.position.x + 5),
+            playerSpawnSeed.position.y, UnityEngine.Random.Range(playerSpawnSeed.position.z, playerSpawnSeed.position.z + 5));
+        SpawnCharacter("Player", spawnPosition, playerSpawnSeed.rotation);
         //GameObject playerSpawnPoint = playerSpawnPoints[UnityEngine.Random.Range(0, playerSpawnPoints.Length - 1)];
-        SpawnCharacter("Player", Vector3.zero, Quaternion.identity);
+        //SpawnCharacter("Player", Vector3.zero, Quaternion.identity);
         //photonView.RPC("SpawnPlayer", RpcTarget.All, playerSpawnPoint.transform.position, playerSpawnPoint.transform.rotation);
         var playersCount = PhotonNetwork.PlayerList.Length;
 
