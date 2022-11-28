@@ -25,4 +25,11 @@ public static class TagManager
     public const string MAIN_CAMERA_TAG = "MainCamera";
     public const string SPAWNPOINT_TAG = "SpawnPoint";
     #endregion
+
+    #region Animations_Tags
+    public const string MOVING_ANIMATION_TAG = "isMoving";
+    public const string SHOOTING_ANIMATION_TAG = "isShooting";
+    public const string HIT_ANIMATION_TAG = "isHit";
+    public const string DEATH_ANIMATION_TAG = "isDead";
+    #endregion
 }

@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-using UnityEngine.UI;
-
 using Photon.Pun;
 using Photon.Realtime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviourPun
 {
@@ -23,19 +22,6 @@ public class HealthBar : MonoBehaviourPun
         GetComponentInParent<HealthManager>().OnHealthPercentHasChanged += HandleHealthChanged;
     }
 
-    [PunRPC]
-    void SetUIHealthBar()
-    {
-    }
-
-    private void Update()
-    {
-        //if(uiFillAmount <= 0)
-        //{
-        //    PhotonNetwork.Destroy(this.gameObject);
-        //}
-    }
-
     private void HandleHealthChanged(float pct)
     {
         if (healthImage.enabled)
@@ -47,10 +33,8 @@ public class HealthBar : MonoBehaviourPun
 
     private IEnumerator ChangeToPct(float pct)
     {
-        if(healthImage.IsActive())
+        if (healthImage.IsActive())
         {
-            Debug.Log("ESTÁ ACTIVO!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            Debug.Log("Active? " + gameObject.activeInHierarchy);
             float preChangePct = healthImage.fillAmount;
             float elapsed = 0f;
 

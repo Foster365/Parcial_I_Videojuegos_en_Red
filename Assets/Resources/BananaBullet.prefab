@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: -3416187182288295997}
   m_Layer: 0
   m_Name: BananaBullet
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 500
   bulletDmg: 3
-  targetTag: Enemy
+  targetTag: Player
 --- !u!114 &-4801344547091862823
 MonoBehaviour:
   m_ObjectHideFlags: 0

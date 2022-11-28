@@ -7,6 +7,8 @@ using UnityEngine;
 public class CharacterController : MonoBehaviourPun
 {
     CharacterModel charModel;
+    CharacterView charView;
+    float cooldownShoot;
     public Vector2 InputVector { get; private set; }
 
     public Vector3 MousePosition { get; private set; }
@@ -15,6 +17,11 @@ public class CharacterController : MonoBehaviourPun
     {
         if (!photonView.IsMine) Destroy(this);
         charModel = GetComponent<CharacterModel>();
+        charView = GetComponent<CharacterView>();
+    }
+    private void Start()
+    {
+        cooldownShoot = 0;
     }
     void Update()
     {
@@ -25,6 +32,30 @@ public class CharacterController : MonoBehaviourPun
 
         MousePosition = Input.mousePosition;
 
-        if (Input.GetButtonDown("Fire1")) photonView.RPC("Shoot", PhotonNetwork.LocalPlayer);
+        var dir = new Vector3(h, 0, v);
+
+        var movementVector = charModel.MoveTowardsTarget(dir);
+        HandleAnim(dir);
+        HandleMovement(movementVector);
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            photonView.RPC("Shoot", PhotonNetwork.LocalPlayer);
+        }
+        else if (Input.GetButtonDown("Fire2")) charView.HandleShootAnim(false);
+    }
+
+    public void HandleAnim(Vector3 _dir)
+    {
+        if (_dir != Vector3.zero) charView.HandleRunAnim(true);
+        else charView.HandleRunAnim(false);
+    }
+
+    public void HandleMovement(Vector3 _movementVector)
+    {
+
+        if (!charModel.RotateTowardsMouse) charModel.RotateTowardMovementVector(_movementVector);
+        else charModel.RotateTowardMouseVector();
+
     }
 }

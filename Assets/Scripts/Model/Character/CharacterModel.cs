@@ -8,28 +8,33 @@ using static LevelsManager;
 public class CharacterModel : MonoBehaviourPun
 {
     [SerializeField]
-    private float moveSpeed;
+    float moveSpeed;
     [SerializeField]
-    private float rotateSpeed;
+    float rotateSpeed;
     [SerializeField]
-    private bool rotateTowardsMouse;
+    bool rotateTowardsMouse;
 
     public float bulletForce = 20f;
 
     bool hasPlayerAlreadySpawned = false;
     HealthManager healthMgr;
-    private CharacterController input;
+    CharacterController input;
     public Transform firePoint;
 
-    private Camera camera;
+    Camera camera;
+    CharacterView charView;
+
     public bool HasPlayerAlreadySpawned { get => hasPlayerAlreadySpawned; set => hasPlayerAlreadySpawned = value; }
     public HealthManager HealthMgr { get => healthMgr; set => healthMgr = value; }
+    public bool RotateTowardsMouse { get => rotateTowardsMouse; set => rotateTowardsMouse = value; }
 
-    private void Awake()
+    void Awake()
     {
         if (!photonView.IsMine) Destroy(this);
         camera = Camera.main.gameObject.GetComponent<Camera>();
         input = GetComponent<CharacterController>();
+        charView = GetComponent<CharacterView>();
+
     }
 
     // Start is called before the first frame update
@@ -38,22 +43,7 @@ public class CharacterModel : MonoBehaviourPun
         healthMgr = GetComponent<HealthManager>();
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (photonView.IsMine)
-        {
-            var targetVector = new Vector3(input.InputVector.x, 0, input.InputVector.y);
-
-            var movementVector = MoveTowardsTarget(targetVector);
-
-            if (!rotateTowardsMouse) RotateTowardMovementVector(movementVector);
-            else RotateTowardMouseVector();
-        }
-    }
-
-    private void RotateTowardMouseVector()
+    public void RotateTowardMouseVector()
     {
         if (photonView.IsMine)
         {
@@ -68,14 +58,14 @@ public class CharacterModel : MonoBehaviourPun
         }
     }
 
-    private void RotateTowardMovementVector(Vector3 movementVector)
+    public void RotateTowardMovementVector(Vector3 movementVector)
     {
         if (movementVector.magnitude == 0) return;
         var rotation = Quaternion.LookRotation(movementVector);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotateSpeed);
     }
 
-    private Vector3 MoveTowardsTarget(Vector3 targetVector)
+    public Vector3 MoveTowardsTarget(Vector3 targetVector)
     {
         var speed = moveSpeed * Time.deltaTime;
 
@@ -87,8 +77,15 @@ public class CharacterModel : MonoBehaviourPun
     [PunRPC]
     void Shoot()
     {
+        charView.HandleShootAnim(true);
         GameObject bullet = PhotonNetwork.Instantiate("BananaBullet", firePoint.position, firePoint.rotation);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
+        //StartCoroutine(WaitToDisableShootAnim());
+    }
+    IEnumerator WaitToDisableShootAnim()
+    {
+        yield return new WaitForSeconds(.25f);
+        charView.HandleShootAnim(false);
     }
 }
