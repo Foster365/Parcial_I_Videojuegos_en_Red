@@ -102,7 +102,7 @@ public class NetManager : MonoBehaviourPunCallbacks
         if (levelsManager != null && levelsManager.LevelsDictionary.Count > 0)
         {
             string level = levelsManager.GetDictionaryValue(Levels.gameScreen, LevelsValues.Game).ToString();
-            PhotonNetwork.LoadLevel("Functionalities_Test");
+            PhotonNetwork.LoadLevel("Game");
         }
         //}
     }
