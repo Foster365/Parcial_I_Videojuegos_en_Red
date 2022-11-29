@@ -53,14 +53,16 @@ public class GameTimerHandler : MonoBehaviourPun
         HandleGameTimer(timeLeft);
 
     }
-    public void HandleGameTimer(float currentTime)
-    {
-        currentTime += 1;
 
-        var minutes = Mathf.FloorToInt(currentTime / 60);
-        var seconds = Mathf.FloorToInt(currentTime % 60);
+    public void HandleGameTimer(float _currentTime)
+    {
+        _currentTime += 1;
+
+        var minutes = Mathf.FloorToInt(_currentTime / 60);
+        var seconds = Mathf.FloorToInt(_currentTime % 60);
 
         gameTimer.text = String.Format("{0:00}:{1:00} ", minutes, seconds);
+
     }
 
     void WaitToSync()
@@ -72,15 +74,15 @@ public class GameTimerHandler : MonoBehaviourPun
         if (syncTimer >= timeToSync)
         {
             Debug.Log("Syncing timer");
-            photonView.RPC("SetTimerFix", RpcTarget.Others, gameTimer.text);
+            photonView.RPC("SetTimerFix", RpcTarget.Others, timeLeft);
             syncTimer = 0;
         }
     }
 
     [PunRPC]
-    public void SetTimerFix(string _timer)
+    public void SetTimerFix(float _timeLeft)
     {
-        gameTimer.text = _timer;
+        gameTimer.text = _timeLeft.ToString();
         Debug.Log("Timer synced");
     }
 
