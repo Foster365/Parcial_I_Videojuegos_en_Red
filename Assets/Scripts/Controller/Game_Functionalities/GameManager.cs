@@ -43,6 +43,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         isGameOn = false;
         gameTimer.text = timeLeft.ToString();
         if (PhotonNetwork.PlayerList.Length > 1) photonView.RPC("StartGame", RpcTarget.All, true);
+        else if (PhotonNetwork.IsMasterClient)
+        {
+            //TESTING ONLY
+            float timer = 0;
+            timer += Time.deltaTime;
+            if (timer >= timeToSync) isAllWavesCompleted = true;
+            //
+        }
     }
 
     private void Update()
@@ -125,12 +133,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     void LoadWinScene()
     {
         SceneManager.LoadScene("Win");
+        PhotonNetwork.Disconnect();
     }
 
     [PunRPC]
     void LoadGameOverScene()
     {
         SceneManager.LoadScene("Game_Over");
+        PhotonNetwork.Disconnect();
     }
 
 }
