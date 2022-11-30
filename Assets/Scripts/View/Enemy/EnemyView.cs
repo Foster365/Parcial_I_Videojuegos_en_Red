@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class EnemyView : MonoBehaviourPun
 {
-
-    public Animator anim;
+    Animator anim;
 
     private void Awake()
     {
