@@ -82,7 +82,7 @@ public class GameTimerHandler : MonoBehaviourPun
     [PunRPC]
     public void SetTimerFix(float _timeLeft)
     {
-        gameTimer.text = _timeLeft.ToString();
+        timeLeft = _timeLeft;
         Debug.Log("Timer synced");
     }
 

@@ -1,44 +1,39 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 public class HealthUpScript : MonoBehaviourPun
 {
     HealthManager hm;
     public int healAmount = -1;
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag == TagManager.PLAYER_TAG)
+        if (photonView.IsMine)
         {
-            var healthComponent = collision.GetComponent<HealthManager>();
-            if (healthComponent != null)
+            if (other.tag == TagManager.PLAYER_TAG)
             {
-                hm = healthComponent;
-                photonView.RPC("Heal", PhotonNetwork.LocalPlayer);
-                //healthComponent.TakeDamage(-1);
-                //Destroy(gameObject);
+                var healthComponent = other.GetComponent<HealthManager>();
+                if (healthComponent != null)
+                {
+                    hm = healthComponent;
+                    PhotonView pv = other.gameObject.GetPhotonView();
+                    if (pv != null)
+                    {
+                        pv.RPC("TakeDamage", pv.Owner, healAmount);
+                    }
+                    photonView.RPC("Heal", PhotonNetwork.LocalPlayer);
+                }
+                photonView.RPC("DestroyBottle", photonView.Owner);
             }
-            photonView.RPC("DestroyBottle", photonView.Owner);
+            else photonView.RPC("DestroyBottle", photonView.Owner);
         }
-        else
-        {
-            photonView.RPC("DestroyBottle", photonView.Owner);
-        }
-
-        //}
     }
 
     [PunRPC]
     void DestroyBottle()
     {
-        PhotonNetwork.Destroy(this.gameObject);
-    }
-
-    [PunRPC]
-    void Heal()
-    {
-        if (hm != null) hm.TakeDamage(healAmount);
+        PhotonNetwork.Destroy(gameObject);
     }
 }

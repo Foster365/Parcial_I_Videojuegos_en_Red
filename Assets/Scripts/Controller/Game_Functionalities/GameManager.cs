@@ -12,7 +12,6 @@ using static LevelsManager;
 public class GameManager : MonoBehaviourPunCallbacks
 {
 
-
     Instantiator gameInstantiator;
     LevelsManager levelManager;
     WaveSpawner waveSpawner;
@@ -34,19 +33,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
         else GameManagerInstance = this;
-        gameInstantiator = GetComponent<Instantiator>();
     }
     private void Start()
     {
-        levelManager = GameObject.FindWithTag(TagManager.LEVELS_MANAGER_TAG).gameObject.GetComponent<LevelsManager>();
-        waveSpawner = GameObject.FindWithTag("GM").gameObject.GetComponent<WaveSpawner>();
-
         gameTimer.enabled = false;
         isGameOn = false;
-
+        gameTimer.text = timeLeft.ToString();
         if (PhotonNetwork.PlayerList.Length > 1) photonView.RPC("StartGame", RpcTarget.All, true);
-
-        gameInstantiator.HandlePlayerSpawning();
     }
 
     private void Update()
@@ -55,8 +48,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             UpdateGameTimer();
             CheckPlayerDisconnected();
-            CheckVictory();
-            CheckDefeat();
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("I'm Master Client");
@@ -89,14 +80,16 @@ public class GameManager : MonoBehaviourPunCallbacks
         HandleGameTimer(timeLeft);
 
     }
-    public void HandleGameTimer(float currentTime)
-    {
-        currentTime += 1;
 
-        var minutes = Mathf.FloorToInt(currentTime / 60);
-        var seconds = Mathf.FloorToInt(currentTime % 60);
+    public void HandleGameTimer(float _currentTime)
+    {
+        _currentTime += 1;
+
+        var minutes = Mathf.FloorToInt(_currentTime / 60);
+        var seconds = Mathf.FloorToInt(_currentTime % 60);
 
         gameTimer.text = String.Format("{0:00}:{1:00} ", minutes, seconds);
+
     }
 
     void WaitToSync()
@@ -108,22 +101,16 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (syncTimer >= timeToSync)
         {
             Debug.Log("Syncing timer");
-            photonView.RPC("SetTimerFix", RpcTarget.Others, gameTimer.text);
+            photonView.RPC("SetTimerFix", RpcTarget.Others, timeLeft);
             syncTimer = 0;
         }
     }
 
     [PunRPC]
-    public void SetTimerFix(string _timer)
+    public void SetTimerFix(float _timeLeft)
     {
-        gameTimer.text = _timer;
+        timeLeft = _timeLeft;
         Debug.Log("Timer synced");
-    }
-
-    void CheckVictory()
-    {
-
-        if (PhotonNetwork.PlayerList.Length > 0 && waveSpawner.isWavesCompleted) photonView.RPC("LoadWinScene", RpcTarget.All);
     }
 
     void CheckDefeat()

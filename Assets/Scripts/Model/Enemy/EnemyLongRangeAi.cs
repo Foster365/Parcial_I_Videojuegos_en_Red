@@ -35,9 +35,12 @@ public class EnemyLongRangeAi : MonoBehaviourPun
 
     private void Awake()
     {
-        player = GameObject.FindWithTag("Player").transform;
-        agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
+        if (photonView.IsMine)
+        {
+            player = GameObject.FindWithTag("Player").transform;
+            agent = GetComponent<NavMeshAgent>();
+            anim = GetComponent<Animator>();
+        }
     }
 
     private void Start()
@@ -137,18 +140,6 @@ public class EnemyLongRangeAi : MonoBehaviourPun
     private void ResetAttack()
     {
         alreadyAttacked = false;
-    }
-
-    public void TakeDamage(int damage)
-    {
-        health -= damage;
-
-        if (health <= 0) Invoke(nameof(DestroyEnemy), .5f);
-    }
-
-    private void DestroyEnemy()
-    {
-        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()

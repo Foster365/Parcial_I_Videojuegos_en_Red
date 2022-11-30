@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Functionalities_Test.unity
     guid: cfbee5d0e986bec4eb68fcddb467ba1b
+  - enabled: 1
+    path: Assets/Scenes/Non_Authoritative.unity
+    guid: 9a9f7544b2ef6f447af68a01999fe016
   m_configObjects: {}
