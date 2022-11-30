@@ -18,10 +18,13 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     //Game timer variables
     [SerializeField] TextMeshProUGUI gameTimer;
-    float timeLeft = 200, syncTimer = 0, timeToSync = 2f;
+    float timeLeft = 10, syncTimer = 0, timeToSync = 2f;
     //
 
     bool isGameOn = false, isVictory = false, isDefeat = false;
+
+    [SerializeField]
+    bool isAllWavesCompleted = false;
 
     #region Singleton
 
@@ -47,21 +50,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (isGameOn)
         {
             UpdateGameTimer();
-            CheckPlayerDisconnected();
+            //CheckPlayerDisconnected();
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("I'm Master Client");
                 WaitToSync();
+                CheckWin();
+                CheckDefeat();
             }
-        }
-    }
-
-    void CheckPlayerDisconnected()
-    {
-        if (!PhotonNetwork.InRoom && !PhotonNetwork.IsConnected)
-        {
-            Debug.Log("Quitting");
-            Application.Quit();
         }
     }
 
@@ -72,6 +68,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         gameTimer.enabled = _activated;
     }
 
+    #region Game_Timer
     void UpdateGameTimer()
     {
 
@@ -112,25 +109,28 @@ public class GameManager : MonoBehaviourPunCallbacks
         timeLeft = _timeLeft;
         Debug.Log("Timer synced");
     }
+    #endregion
+
+    void CheckWin()
+    {
+        if (isAllWavesCompleted) photonView.RPC("LoadWinScene", RpcTarget.All);
+    }
 
     void CheckDefeat()
     {
-
-        if (PhotonNetwork.PlayerList.Length == 0 || timeLeft <= 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
+        if (timeLeft <= 0) photonView.RPC("LoadGameOverScene", RpcTarget.All);
     }
 
     [PunRPC]
     void LoadWinScene()
     {
-        string level = levelManager.GetDictionaryValue(Levels.winScreen, LevelsValues.Win).ToString();
-        SceneManager.LoadScene(level);
+        SceneManager.LoadScene("Win");
     }
 
     [PunRPC]
     void LoadGameOverScene()
     {
-        string level = levelManager.GetDictionaryValue(Levels.gameOverScreen, LevelsValues.Game_Over).ToString();
-        SceneManager.LoadScene(level);
+        SceneManager.LoadScene("Game_Over");
     }
 
 }
