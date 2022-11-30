@@ -37,18 +37,22 @@ public class CharacterController : MonoBehaviourPun
         var movementVector = charModel.MoveTowardsTarget(dir);
         HandleAnim(dir);
         HandleMovement(movementVector);
-
-        if (Input.GetButtonDown("Fire1"))
-        {
-            photonView.RPC("Shoot", PhotonNetwork.LocalPlayer);
-        }
-        else if (Input.GetButtonDown("Fire2")) charView.HandleShootAnim(false);
+        HandleShootingInput();
     }
 
     public void HandleAnim(Vector3 _dir)
     {
         if (_dir != Vector3.zero) charView.HandleRunAnim(true);
         else charView.HandleRunAnim(false);
+    }
+
+    void HandleShootingInput()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            photonView.RPC("Shoot", PhotonNetwork.LocalPlayer);
+        }
+        else charView.HandleShootAnim(false);
     }
 
     public void HandleMovement(Vector3 _movementVector)

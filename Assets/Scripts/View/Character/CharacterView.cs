@@ -14,8 +14,7 @@ public class CharacterView : MonoBehaviourPun
 
     private void Awake()
     {
-        if (!photonView.IsMine) Destroy(this);
-        anim = GetComponent<Animator>();
+        if (photonView.IsMine) anim = GetComponent<Animator>();
     }
     // Start is called before the first frame update
     void Start()
