@@ -70,7 +70,7 @@ public class NetManager : MonoBehaviourPunCallbacks
     {
 
         RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 3;
+        options.MaxPlayers = byte.Parse(inputFieldHandler.MaxPlayers.text);
         options.IsOpen = true;
         options.IsVisible = true;
 

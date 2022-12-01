@@ -20,6 +20,7 @@ public class CharacterModel : MonoBehaviourPun
     HealthManager healthMgr;
     CharacterController input;
     public Transform firePoint;
+    bool isShooting = false;
 
     Camera camera;
     CharacterView charView;
@@ -27,6 +28,7 @@ public class CharacterModel : MonoBehaviourPun
     public bool HasPlayerAlreadySpawned { get => hasPlayerAlreadySpawned; set => hasPlayerAlreadySpawned = value; }
     public HealthManager HealthMgr { get => healthMgr; set => healthMgr = value; }
     public bool RotateTowardsMouse { get => rotateTowardsMouse; set => rotateTowardsMouse = value; }
+    public bool IsShooting { get => isShooting; set => isShooting = value; }
 
     void Awake()
     {
@@ -77,15 +79,16 @@ public class CharacterModel : MonoBehaviourPun
     [PunRPC]
     void Shoot()
     {
+
         charView.HandleShootAnim(true);
         GameObject bullet = PhotonNetwork.Instantiate("BananaBullet", firePoint.position, firePoint.rotation);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
-        //StartCoroutine(WaitToDisableShootAnim());
+        StartCoroutine(WaitToDisableShootAnim());
     }
     IEnumerator WaitToDisableShootAnim()
     {
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(.1f);
         charView.HandleShootAnim(false);
     }
 }

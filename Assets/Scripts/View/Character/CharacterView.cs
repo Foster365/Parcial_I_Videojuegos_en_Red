@@ -4,18 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterView : MonoBehaviourPun
+public class CharacterView : EntityView
 {
     [SerializeField] GameObject playerNickPrefab;
     PlayerNickname playerNick;
     [SerializeField] bool isDead = false;
-    public Animator anim;
-
-
-    private void Awake()
-    {
-        if (photonView.IsMine) anim = GetComponent<Animator>();
-    }
     // Start is called before the first frame update
     void Start()
     {
@@ -50,22 +43,5 @@ public class CharacterView : MonoBehaviourPun
     void OnDestroyNick()
     {
         PhotonNetwork.Destroy(playerNick.gameObject);
-    }
-
-    public void HandleRunAnim(bool isRunning)
-    {
-        anim.SetBool(TagManager.MOVING_ANIMATION_TAG, isRunning);
-    }
-    public void HandleShootAnim(bool isShooting)
-    {
-        anim.SetBool(TagManager.SHOOTING_ANIMATION_TAG, isShooting);
-    }
-    public void HandleHitAnim(bool isHit)
-    {
-        anim.SetBool(TagManager.HIT_ANIMATION_TAG, isHit);
-    }
-    public void HandleDeathAnim(bool isDead)
-    {
-        anim.SetBool(TagManager.DEATH_ANIMATION_TAG, isDead);
     }
 }

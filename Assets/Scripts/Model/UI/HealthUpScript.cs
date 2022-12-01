@@ -23,7 +23,6 @@ public class HealthUpScript : MonoBehaviourPun
                     {
                         pv.RPC("TakeDamage", pv.Owner, healAmount);
                     }
-                    photonView.RPC("Heal", PhotonNetwork.LocalPlayer);
                 }
                 photonView.RPC("DestroyBottle", photonView.Owner);
             }

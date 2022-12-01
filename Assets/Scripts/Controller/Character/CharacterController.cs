@@ -25,7 +25,6 @@ public class CharacterController : MonoBehaviourPun
     }
     void Update()
     {
-
         var h = Input.GetAxis("Horizontal");
         var v = Input.GetAxis("Vertical");
         InputVector = new Vector2(h, v);
@@ -52,7 +51,7 @@ public class CharacterController : MonoBehaviourPun
         {
             photonView.RPC("Shoot", PhotonNetwork.LocalPlayer);
         }
-        else charView.HandleShootAnim(false);
+        //else charView.HandleShootAnim(false);
     }
 
     public void HandleMovement(Vector3 _movementVector)

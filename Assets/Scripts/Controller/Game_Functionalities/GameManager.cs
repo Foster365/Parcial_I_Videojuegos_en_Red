@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     //Game timer variables
     [SerializeField] TextMeshProUGUI gameTimer;
-    float timeLeft = 10, syncTimer = 0, timeToSync = 2f;
+    float timeLeft = 200, syncTimer = 0, timeToSync = 2f;
     //
 
     bool isGameOn = false, isVictory = false, isDefeat = false;
@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     private void Start()
     {
+        Debug.Log("Max players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
         gameTimer.enabled = false;
         isGameOn = false;
         gameTimer.text = timeLeft.ToString();

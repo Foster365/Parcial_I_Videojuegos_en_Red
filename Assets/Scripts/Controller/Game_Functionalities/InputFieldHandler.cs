@@ -1,43 +1,35 @@
 using Photon.Pun;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-using Photon.Pun;
 
 public class InputFieldHandler : MonoBehaviourPun
 {
     [SerializeField] TMP_InputField characterNickName;
     [SerializeField] TMP_InputField roomName;
+    [SerializeField] TMP_InputField maxPlayers;
     public const string playerNamePrefKey = "Charango";
     public const string roomNamePrefKey = "Room";
+    public const string maxPlayersPrefKey = "3";
 
     public TMP_InputField CharacterNickName { get => characterNickName; set => characterNickName = value; }
     public TMP_InputField RoomName { get => roomName; set => roomName = value; }
+    public TMP_InputField MaxPlayers { get => maxPlayers; set => maxPlayers = value; }
 
     // Start is called before the first frame update
     void Start()
     {
-        if(photonView.IsMine)
+        if (photonView.IsMine)
         {
-            //DontDestroyOnLoad(this);
-
             HandleName(characterNickName, playerNamePrefKey);
             HandleName(roomName, roomNamePrefKey);
-
+            HandleName(maxPlayers, maxPlayersPrefKey);
         }
     }
 
-    private void Update()
-    {
-        if(photonView.IsMine)
-        {
-
-        }
-    }
     public void HandleName(TMP_InputField textInputName, string defaultInputName)
     {
 
@@ -52,9 +44,8 @@ public class InputFieldHandler : MonoBehaviourPun
             }
         }
 
-        PhotonNetwork.NickName = defaultName;
-
     }
+
     public void SetPlayerInputName()
     {
         PlayerPrefs.SetString(playerNamePrefKey, characterNickName.text);
@@ -78,5 +69,17 @@ public class InputFieldHandler : MonoBehaviourPun
         }
         //PhotonNetwork.CurrentRoom.Name = room.text;
         PlayerPrefs.SetString(roomNamePrefKey, roomName.text);
+    }
+    public void SetRoomMaxPlayers()
+    {
+
+        PlayerPrefs.SetString(maxPlayersPrefKey, maxPlayers.text);
+        // #Important
+        if (string.IsNullOrEmpty(maxPlayers.text))
+        {
+            return;
+        }
+        //PhotonNetwork.CurrentRoom.Name = room.text;
+        PlayerPrefs.SetString(maxPlayersPrefKey, maxPlayers.text);
     }
 }
