@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BananaEnemyScript : Bullet
+public class BananaEnemyScript : Bullet // TODO # Note: Este script quedará deprecado al migrar lógica de los nuevos enemies. Se utilizará el script Bullet que utiliza el Player, script el cual se encuentra correctamente sincronizado.
 {
 
     HealthManager healthManager;

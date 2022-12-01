@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelsManager : MonoBehaviour
+public class LevelsManager : MonoBehaviour // TODO # Note: Este script debería eliminarse de Unity porque no se está usando.
 {
-    public enum Levels { mainMenuScreen, gameScreen, winScreen, gameOverScreen};
+    public enum Levels { mainMenuScreen, gameScreen, winScreen, gameOverScreen };
     public enum LevelsValues { Main_Menu, Game, Win, Game_Over };
 
     Dictionary<Levels, LevelsValues> levelsDictionary = new Dictionary<Levels, LevelsValues>();
@@ -19,7 +19,7 @@ public class LevelsManager : MonoBehaviour
 
     public LevelsValues GetDictionaryValue(Levels level, LevelsValues val)
     {
-        levelsDictionary.TryGetValue(level, out val); 
+        levelsDictionary.TryGetValue(level, out val);
         return val;
     }
 

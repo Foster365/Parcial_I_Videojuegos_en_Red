@@ -1,16 +1,15 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-using Photon.Pun;
-using Photon.Realtime;
-
-public class EnemyController : MonoBehaviourPun
+public class EnemyController : MonoBehaviourPun // TODO # Note: Se modificará la lógica en este script con la nueva lógica de los enemies.
 {
 
     EnemyModel enemyModel;
-    
+
     //states
     public bool playerInSightRange, playerInAttackRange;
 
@@ -22,7 +21,7 @@ public class EnemyController : MonoBehaviourPun
 
     private void Update()
     {
-        if(enemyModel.characters != null) 
+        if (enemyModel.characters != null)
         {
 
             if (!enemyModel.IsPlayerInSightRange() && !enemyModel.IsPlayerInAttackRange()) enemyModel.Patrolling();
@@ -34,11 +33,12 @@ public class EnemyController : MonoBehaviourPun
 
     void OnDrawGizmosSelected()
     {
-
+        if (photonView.IsMine)
+        {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, enemyModel.attackRange);
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, enemyModel.sightRange);
-        
+        }
     }
 }

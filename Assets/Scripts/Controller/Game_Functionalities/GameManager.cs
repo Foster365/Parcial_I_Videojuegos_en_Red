@@ -11,8 +11,6 @@ using static LevelsManager;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-
-    Instantiator gameInstantiator;
     LevelsManager levelManager;
     WaveSpawner waveSpawner;
 

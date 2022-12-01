@@ -26,7 +26,6 @@ public class CharacterView : EntityView
     private void Update()
     {
         if (isDead) OnDestroyNick();
-        //else if (Input.GetKeyDown(KeyCode.Q)) anim.SetBool("Punch", true);
     }
 
     [PunRPC]

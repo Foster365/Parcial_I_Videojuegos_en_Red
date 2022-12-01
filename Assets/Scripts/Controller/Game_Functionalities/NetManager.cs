@@ -15,20 +15,6 @@ public class NetManager : MonoBehaviourPunCallbacks
     [SerializeField] TextMeshProUGUI connectionStatus;
     [SerializeField] TextMeshProUGUI playersCount;
     [SerializeField] InputFieldHandler inputFieldHandler;
-    LevelsManager levelsManager;
-    string playersMaxNumber = "2";
-    string[] genericNicknames = { "Menem", "Chinchulancha", "SinNombre" };
-    string genericNickName = "Carlos";
-    bool isRoomCreated = false;
-
-    private void Awake()
-    {
-
-        levelsManager = GameObject.FindWithTag(TagManager.LEVELS_MANAGER_TAG).GetComponent<LevelsManager>();
-
-    }
-
-
 
     // Start is called before the first frame update
     void Start()
@@ -81,7 +67,6 @@ public class NetManager : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
-        isRoomCreated = true;
 
         connectionStatus.text = "Room " + inputFieldHandler.RoomName.text + " was created!";
     }
@@ -99,12 +84,10 @@ public class NetManager : MonoBehaviourPunCallbacks
     {
         connectionStatus.text = "Joined room";
 
-        if (levelsManager != null && levelsManager.LevelsDictionary.Count > 0)
-        {
-            string level = levelsManager.GetDictionaryValue(Levels.gameScreen, LevelsValues.Game).ToString();
-            PhotonNetwork.LoadLevel("Non_Authoritative");
-        }
-        //}
+        //if (levelsManager != null && levelsManager.LevelsDictionary.Count > 0)
+        //{
+        //    string level = levelsManager.GetDictionaryValue(Levels.gameScreen, LevelsValues.Game).ToString();
+        PhotonNetwork.LoadLevel("Non_Authoritative");
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {

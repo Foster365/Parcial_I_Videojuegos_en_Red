@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthManager : MonoBehaviourPun
+public class HealthManager : MonoBehaviourPun // TODO # Note: Este script no debe destruirse (if(!photonView.IsMine) Destroy(this)), porque es utilizado por otro photonView para acceder a sus métodos y ejecutar sus rpc's (Cuando colisiono llamo a su TakeDamage())
 {
     public int maxHealth = 3;
     int currentHealth;

@@ -17,6 +17,8 @@ public class HealthBar : MonoBehaviourPun
 
     private void Awake()
     {
+        if (!photonView.IsMine) Destroy(this);
+
         healthImage.enabled = true;
         gameObject.SetActive(true);
         GetComponentInParent<HealthManager>().OnHealthPercentHasChanged += HandleHealthChanged;
@@ -27,11 +29,11 @@ public class HealthBar : MonoBehaviourPun
         if (healthImage.enabled)
         {
             Debug.Log("Health image is enabled: " + healthImage.enabled);
-            StartCoroutine(ChangeToPct(pct));
+            StartCoroutine(ChangeToPercentage(pct));
         }
     }
 
-    private IEnumerator ChangeToPct(float pct)
+    private IEnumerator ChangeToPercentage(float pct)
     {
         if (healthImage.IsActive())
         {

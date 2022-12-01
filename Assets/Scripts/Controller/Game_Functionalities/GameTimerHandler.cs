@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-public class GameTimerHandler : MonoBehaviourPun
+public class GameTimerHandler : MonoBehaviourPun // TODO # Note: Clase a modo de testing, se pasó lógica a Game Manager y se testeó de forma exitosa.
 {
 
     [SerializeField] TextMeshProUGUI gameTimer;

@@ -7,7 +7,7 @@ using UnityEngine;
 public class AttackCollider : MonoBehaviourPun
 {
     public int attackColliderDamage;
-    HealthManager healthManager;
+    //HealthManager healthManager;
     [SerializeField] string targetTag;
 
 
@@ -21,7 +21,7 @@ public class AttackCollider : MonoBehaviourPun
                 var healthComponent = other.GetComponent<HealthManager>();
                 if (healthComponent != null)
                 {
-                    healthManager = healthComponent;
+                    //healthManager = healthComponent;
                     //healthManager.TakeDamage(bulletDmg);
                     PhotonView pv = other.gameObject.GetPhotonView();
                     Debug.Log("PV: " + pv);

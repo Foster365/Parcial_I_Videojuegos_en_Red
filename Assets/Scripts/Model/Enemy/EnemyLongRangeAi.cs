@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyLongRangeAi : MonoBehaviourPun
+public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará este script cuando se migre la nueva lógica de los enemies.
 {
     public NavMeshAgent agent;
     public Transform player;

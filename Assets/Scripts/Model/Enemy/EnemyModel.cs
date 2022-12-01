@@ -1,12 +1,11 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine.AI;
 
-public class EnemyModel : MonoBehaviourPun
+public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógica en este script con la nueva lógica de los enemies.
 {
     HealthManager healthMgr;
 
@@ -38,7 +37,7 @@ public class EnemyModel : MonoBehaviourPun
     // Start is called before the first frame update
     void Awake()
     {
-        if(!photonView.IsMine) Destroy(this);
+        if (!photonView.IsMine) Destroy(this);
         healthMgr = GetComponent<HealthManager>();
     }
 
@@ -48,7 +47,7 @@ public class EnemyModel : MonoBehaviourPun
     }
 
     #region Enemy_Decision_Tree_Questions
-    
+
     public bool IsPlayerInSightRange()
     {
 

@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollowUp : MonoBehaviourPun
+public class CameraFollowUp : MonoBehaviourPun // TODO # Note: Este script contiene bugs. Debería 1) Solucionarse el bug. 2) Eliminarse de Unity.
 {
 
     float damping = 12f, height = 13, offset = 0, viewDistance = 3;
@@ -29,7 +29,7 @@ public class CameraFollowUp : MonoBehaviourPun
 
         center = new Vector3((playerPosition.x + cursorPosition.x) / 2, playerPosition.y, (playerPosition.z + cursorPosition.z) / 2);
 
-        transform.position = Vector3.Lerp(transform.position, center + new Vector3(0, height, offset).normalized, Time.deltaTime * damping);
+        transform.position = Vector3.Lerp(transform.position, center + new Vector3(0, height, offset).normalized, Time.deltaTime * damping); // TODO BUG: Esta línea de código produce que el player salte constantemente, y no hace que la cámara siga al player al moverse.
     }
 
 
