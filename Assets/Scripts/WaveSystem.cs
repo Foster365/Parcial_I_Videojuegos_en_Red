@@ -35,6 +35,7 @@ public class WaveSystem : MonoBehaviourPun
 
     private void Update()
     {
+
         if (photonView.IsMine)
         {
             Debug.Log("Curr wave index value: " + currentWaveNumber);
@@ -42,22 +43,14 @@ public class WaveSystem : MonoBehaviourPun
             currentWave = waves[currentWaveNumber];
             SpawnWave();
             GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
-            if (totalEnemies.Length == 0 && currentWaveNumber < waves.Length && !canSpawn)
+            if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber+1 != waves.Length)
             {
-                //if (currentWaveNumber + 1 != waves.Length)
-                //{
-                //if (canSpawn)
-                //{
-                SpawnNextWave();
-                //rpc
-                photonView.RPC("SetWaveUI", RpcTarget.All);
-                //}
-                //}
-
-            }
-            else
-            {
-                Debug.Log("win");
+                currentWaveNumber++;
+                canSpawn = true;
+                if(currentWaveNumber == 2)
+                {
+                    Debug.Log("win");
+                }
             }
         }
     }
@@ -66,12 +59,6 @@ public class WaveSystem : MonoBehaviourPun
     void SetWaveUI()
     {
         waveNumber.text = currentWaveNumber.ToString();
-    }
-
-    void SpawnNextWave()
-    {
-        currentWaveNumber++;
-        canSpawn = true;
     }
 
     void SpawnWave()
