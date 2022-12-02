@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 [System.Serializable]
 public class Wave
 {
@@ -29,26 +29,40 @@ public class WaveSystem : MonoBehaviourPun
 
     private void Start()
     {
+        currentWaveNumber = 0;
         waveNumber.text = currentWaveNumber.ToString();
-        //if (!photonView.IsMine) Destroy(this);
     }
 
     private void Update()
     {
         if (photonView.IsMine)
         {
+            Debug.Log("Curr wave index value: " + currentWaveNumber);
+            Debug.Log("waves length: " + (waves.Length - 1));
             currentWave = waves[currentWaveNumber];
             SpawnWave();
-            GameObject[] totalEnemeis = GameObject.FindGameObjectsWithTag("Enemy");
-            if (totalEnemeis.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length)
+            GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+            if (totalEnemies.Length == 0 && currentWaveNumber < waves.Length && !canSpawn)
             {
+                //if (currentWaveNumber + 1 != waves.Length)
+                //{
+                //if (canSpawn)
+                //{
                 SpawnNextWave();
                 //rpc
                 photonView.RPC("SetWaveUI", RpcTarget.All);
+                //}
+                //}
+
+            }
+            else
+            {
+                Debug.Log("win");
             }
         }
     }
 
+    [PunRPC]
     void SetWaveUI()
     {
         waveNumber.text = currentWaveNumber.ToString();
@@ -78,6 +92,6 @@ public class WaveSystem : MonoBehaviourPun
                 }
             }
         }
-       
+
     }
 }

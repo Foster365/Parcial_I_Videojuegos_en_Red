@@ -77,7 +77,7 @@ public class HealthManager : MonoBehaviourPun // TODO # Note: Este script no deb
     [PunRPC]
     void Die()
     {
-        charView.HandleDeathAnim(true);
+        //charView.HandleDeathAnim(true);
         StartCoroutine(WaitUntiDeactivateAnim());
         PhotonNetwork.Destroy(gameObject);
     }

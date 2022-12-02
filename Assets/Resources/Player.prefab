@@ -1344,9 +1344,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b367ce6f9c6e3804b9600a7791fb2fe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 5116065184491660961}
   playerNickPrefab: {fileID: 3564302131799311011, guid: c8df4f93341cd0946bf2b6389c2a7735, type: 3}
   isDead: 0
-  anim: {fileID: 5116065184491660961}
 --- !u!114 &5749181357447816800
 MonoBehaviour:
   m_ObjectHideFlags: 0
