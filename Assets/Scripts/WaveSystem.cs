@@ -60,7 +60,7 @@ public class WaveSystem : MonoBehaviourPun
             {
                 currentWaveNumber++;
                 canSpawn = true;
-                photonView.RPC("SetWaveUI", RpcTarget.All);
+                photonView.RPC("SetWaveUI", RpcTarget.All, currentWaveNumber.ToString());
                 if (currentWaveNumber == waves.Length)
                 {
                     PhotonNetwork.LoadLevel("Win"); // TODO # Note: Setear bool o condición para rpc win a todos desde el game mgr.
@@ -71,9 +71,9 @@ public class WaveSystem : MonoBehaviourPun
     }
 
     [PunRPC]
-    void SetWaveUI()
+    void SetWaveUI(string _currWaveNum)
     {
-        waveNumber.text = currentWaveNumber.ToString();
+        waveNumber.text = _currWaveNum;
     }
 
     void SpawnWave()
@@ -88,7 +88,6 @@ public class WaveSystem : MonoBehaviourPun
             GameObject enemyGO = PhotonNetwork.Instantiate(randomEnemy, randomPoint.position, Quaternion.identity);
             currentWave.numbOfEnemies--;
             EnemyModel eModel = enemyGO.gameObject.GetComponent<EnemyModel>();
-            Debug.Log("Enemy owner: " + enemyGO.GetPhotonView().Owner);
             eModel.SetRandomTarget();
             nextSpawnTime = Time.time + currentWave.spawnInterval;
             if (currentWave.numbOfEnemies == 0)
