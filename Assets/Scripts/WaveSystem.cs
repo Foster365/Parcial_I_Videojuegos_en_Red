@@ -40,11 +40,21 @@ public class WaveSystem : MonoBehaviourPun
             currentWave = waves[currentWaveNumber];
             SpawnWave();
             GameObject[] totalEnemeis = GameObject.FindGameObjectsWithTag("Enemy");
-            if (totalEnemeis.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length)
+            if (totalEnemeis.Length == 0 )
             {
-                SpawnNextWave();
-                //rpc
-                photonView.RPC("SetWaveUI", RpcTarget.All);
+                if(currentWaveNumber + 1 != waves.Length)
+                {
+                    if (canSpawn)
+                    {
+                        SpawnNextWave();
+                        //rpc
+                        photonView.RPC("SetWaveUI", RpcTarget.All);
+                    }
+                }
+                else
+                {
+                    Debug.Log("win");
+                }
             }
         }
     }
