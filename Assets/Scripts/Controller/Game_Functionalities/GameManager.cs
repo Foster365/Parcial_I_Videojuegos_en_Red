@@ -61,11 +61,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (isGameOn)
         {
             UpdateGameTimer();
+            waveSystem.UpdateWave();
             //CheckPlayerDisconnected();
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("I'm Master Client");
-                waveSystem.UpdateWave();
                 WaitToSync();
                 CheckWin();
                 CheckDefeat();
