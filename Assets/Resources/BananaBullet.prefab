@@ -130,7 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 500
   bulletDmg: 3
-  targetTag: Player
+  targetTag: Enemy
 --- !u!114 &-4801344547091862823
 MonoBehaviour:
   m_ObjectHideFlags: 0
