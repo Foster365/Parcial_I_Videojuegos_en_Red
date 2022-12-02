@@ -12,6 +12,7 @@ using static LevelsManager;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     LevelsManager levelManager;
+    Character_Instantiator charInstantiator;
     WaveSpawner waveSpawner;
 
     //Game timer variables
@@ -20,34 +21,41 @@ public class GameManager : MonoBehaviourPunCallbacks
     //
 
     bool isGameOn = false, isVictory = false, isDefeat = false;
-
+    WaveSystem waveSystem;
     [SerializeField]
     bool isAllWavesCompleted = false;
 
     #region Singleton
 
     public GameManager GameManagerInstance { get; private set; }
+    public bool IsGameOn { get => isGameOn; set => isGameOn = value; }
 
     #endregion;
 
     private void Awake()
     {
         if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
-        else GameManagerInstance = this;
+        else
+        {
+            GameManagerInstance = this;
+            waveSystem = GetComponent<WaveSystem>();
+            charInstantiator = GetComponent<Character_Instantiator>();
+        }
     }
     private void Start()
     {
-        Debug.Log("Max players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
+        //Debug.Log("Max players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
+        //charInstantiator.HandlePlayerInstantiation();
         gameTimer.enabled = false;
         isGameOn = false;
         gameTimer.text = timeLeft.ToString();
-        if (PhotonNetwork.PlayerList.Length > 1) photonView.RPC("StartGame", RpcTarget.All, true);
+        if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.MaxPlayers) photonView.RPC("StartGame", RpcTarget.All, true);
         else if (PhotonNetwork.IsMasterClient)
         {
             //TESTING ONLY
-            float timer = 0;
-            timer += Time.deltaTime;
-            if (timer >= timeToSync) isAllWavesCompleted = true;
+            //float timer = 0;
+            //timer += Time.deltaTime;
+            //if (timer >= timeToSync) isAllWavesCompleted = true;
             //
         }
     }
@@ -61,6 +69,10 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("I'm Master Client");
+                CharacterModel[] charModels = GameObject.FindObjectsOfType<CharacterModel>();
+                Debug.Log("Char models" + charModels.Length);
+                //waveSystem.UpdateWave();
+                //if (isNextWave)
                 WaitToSync();
                 CheckWin();
                 CheckDefeat();
@@ -101,7 +113,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("Waiting to sync timer");
 
         syncTimer += Time.deltaTime;
-        Debug.Log("timer: " + syncTimer);
+        //Debug.Log("timer: " + syncTimer);
         if (syncTimer >= timeToSync)
         {
             Debug.Log("Syncing timer");

@@ -29,6 +29,7 @@ public static class TagManager
     #region Animations_Tags
     public const string MOVING_ANIMATION_TAG = "isMoving";
     public const string SHOOTING_ANIMATION_TAG = "isShooting";
+    public const string PUNCHING_ANIMATION_TAG = "isPunching";
     public const string HIT_ANIMATION_TAG = "isHit";
     public const string DEATH_ANIMATION_TAG = "isDead";
     #endregion
