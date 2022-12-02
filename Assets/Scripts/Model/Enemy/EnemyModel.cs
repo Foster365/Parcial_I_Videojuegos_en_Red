@@ -60,7 +60,7 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificarï¿½ la lï
         //if (!_isInCooldown)
         //{
         target = _target;
-        photonView.RPC("UpdateTarget", RpcTarget.Others, target.photonView.ViewID);
+        //photonView.RPC("UpdateTarget", RpcTarget.Others, target.photonView.ViewID);
         //}
     }
     public void SetRandomTarget()
@@ -162,8 +162,8 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificarï¿½ la lï
     #region Melee_Attack_Methods
     public void HandleMeleeAttack()
     {
-        
-        
+
+
         attackTimer += Time.deltaTime;
         if (attackTimer >= maxAttackTimer)
         {
