@@ -2159,6 +2159,8 @@ MonoBehaviour:
     spawnInterval: 0.5
   - waveName: Enemies 3
     numbOfEnemies: 2
+  - waveName: Win Wave
+    numbOfEnemies: 5
     typeOfEnemies:
     - Robot_1
     - Robot_3
