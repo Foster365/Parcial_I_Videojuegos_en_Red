@@ -55,7 +55,7 @@ public class HealthManager : MonoBehaviourPun
         {
             currentHealth -= amount;
             Debug.Log(gameObject.name + "Health: " + currentHealth);
-            charView.HandleHitAnim(true);
+            //charView.HandleHitAnim(true);
             if (currentHealth <= 0)
             {
                 //death
@@ -63,8 +63,8 @@ public class HealthManager : MonoBehaviourPun
                 photonView.RPC("Die", photonView.Owner);
             }
             photonView.RPC("UpdateHealth", photonView.Owner, currentHealth);
-            StartCoroutine(WaitUntiDeactivateAnim());
-            charView.HandleHitAnim(false);
+            //StartCoroutine(WaitUntiDeactivateAnim());
+            //charView.HandleHitAnim(false);
             //float currentHealthPct = (float)currentHealth / (float)maxHealth;
             //OnHealthPctChanged(currentHealthPct);
         }
