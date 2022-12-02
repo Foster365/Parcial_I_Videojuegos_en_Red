@@ -74,13 +74,9 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
             List<CharacterModel> list = new List<CharacterModel>();
             for (int i = 0; i < characters.Length; i++)
             {
-                if (characters[i] != target)
-                {
-
-                    list.Add(characters[i].gameObject.GetComponent<CharacterModel>());
-                }
+                list.Add(characters[i].gameObject.GetComponent<CharacterModel>());
             }
-            int index = Random.Range(0, list.Count - 1);
+            int index = Random.Range(0, list.Count);
             SetTarget(list[index]);
         }
         //}

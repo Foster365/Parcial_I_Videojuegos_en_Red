@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public GameManager GameManagerInstance { get; private set; }
     public bool IsGameOn { get => isGameOn; set => isGameOn = value; }
+    public bool IsVictory { get => isVictory; set => isVictory = value; }
+    public bool IsDefeat { get => isDefeat; set => isDefeat = value; }
 
     #endregion;
 
@@ -71,10 +73,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 Debug.Log("I'm Master Client");
                 CharacterModel[] charModels = GameObject.FindObjectsOfType<CharacterModel>();
                 Debug.Log("Char models" + charModels.Length);
-                //waveSystem.UpdateWave();
-                //if (isNextWave)
+                Debug.Log("Is victory?: " + isVictory);
                 WaitToSync();
-                CheckWin();
+                //CheckWin();
                 CheckDefeat();
             }
         }
@@ -132,7 +133,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void CheckWin()
     {
-        if (isAllWavesCompleted) photonView.RPC("LoadWinScene", RpcTarget.All);
+        if (isVictory) photonView.RPC("LoadWinScene", RpcTarget.All);
     }
 
     void CheckDefeat()

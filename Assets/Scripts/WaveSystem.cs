@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 [System.Serializable]
 public class Wave
 {
@@ -22,12 +24,14 @@ public class WaveSystem : MonoBehaviourPun
     private Wave currentWave;
     private int currentWaveNumber;
     private float nextSpawnTime;
-    [SerializeField] int maxWaves;
     public TextMeshProUGUI waveNumber;
+    bool isWavesCompleted = false;
 
     public bool canSpawn = true;
 
     GameManager gameMgr;
+
+    public bool IsWavesCompleted { get => isWavesCompleted; set => isWavesCompleted = value; }
 
     private void Awake()
     {
@@ -43,12 +47,12 @@ public class WaveSystem : MonoBehaviourPun
 
     private void Update()
     {
-        if (photonView.IsMine) UpdateWave();
+        if (PhotonNetwork.IsMasterClient) UpdateWave();
     }
 
     public void UpdateWave()
     {
-        if (photonView.IsMine && gameMgr.IsGameOn)
+        if (PhotonNetwork.IsMasterClient && gameMgr.IsGameOn)
         {
 
             Debug.Log("Curr wave index value: " + currentWaveNumber);
@@ -63,11 +67,19 @@ public class WaveSystem : MonoBehaviourPun
                 photonView.RPC("SetWaveUI", RpcTarget.All, currentWaveNumber.ToString());
                 if (currentWaveNumber == waves.Length)
                 {
-                    PhotonNetwork.LoadLevel("Win"); // TODO # Note: Setear bool o condición para rpc win a todos desde el game mgr.
+                    isWavesCompleted = true;
+                    photonView.RPC("LoadWinScene", RpcTarget.All);
+                    //photonView.RPC("SetVictoryConditionToTrue", PhotonNetwork.MasterClient, isWavesCompleted);// TODO # Note: Setear bool o condición para rpc win a todos desde el game mgr.
                 }
             }
         }
 
+    }
+
+    [PunRPC]
+    public void SetVictoryConditionToTrue(bool _isVictory)
+    {
+        gameMgr.IsVictory = _isVictory;
     }
 
     [PunRPC]
@@ -76,9 +88,21 @@ public class WaveSystem : MonoBehaviourPun
         waveNumber.text = _currWaveNum;
     }
 
+    void CheckWin()
+    {
+        //if (isVictory) photonView.RPC("LoadWinScene", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void LoadWinScene()
+    {
+        SceneManager.LoadScene("Win");
+        PhotonNetwork.Disconnect();
+    }
+
     void SpawnWave()
     {
-        //if (photonView.IsMine)
+        //if (PhotonNetwork.IsMasterClient)
         //{
         Debug.Log("Start Wave");
         if (canSpawn && nextSpawnTime < Time.time)
