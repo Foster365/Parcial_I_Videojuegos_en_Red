@@ -55,7 +55,8 @@ public class HealthManager : MonoBehaviourPun // TODO # Note: Este script no deb
         {
             currentHealth -= amount;
             Debug.Log(gameObject.name + "Health: " + currentHealth);
-            //charView.HandleHitAnim(true);
+            charView.HandleHitAnim(true);
+            StartCoroutine(WaitUntiDeactivateAnim());
             if (currentHealth <= 0)
             {
                 //death
@@ -77,7 +78,7 @@ public class HealthManager : MonoBehaviourPun // TODO # Note: Este script no deb
     [PunRPC]
     void Die()
     {
-        //charView.HandleDeathAnim(true);
+        charView.HandleDeathAnim(true);
         StartCoroutine(WaitUntiDeactivateAnim());
         PhotonNetwork.Destroy(gameObject);
     }
