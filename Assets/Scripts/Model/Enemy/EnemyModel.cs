@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
 
-public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógica en este script con la nueva lógica de los enemies.
+public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificarï¿½ la lï¿½gica en este script con la nueva lï¿½gica de los enemies.
 {
 
     [Header("Basic Variables")]
@@ -99,6 +99,7 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
         canMove = true;
         if (canMove)
         {
+            enemView.HandleRunAnim(true);
             Move(dir.normalized);
             LookDir(dir);
         }
@@ -161,13 +162,21 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     #region Melee_Attack_Methods
     public void HandleMeleeAttack()
     {
-        enemView.HandlePunchingAnim(true);
+        
+        
         attackTimer += Time.deltaTime;
         if (attackTimer >= maxAttackTimer)
         {
-            enemView.HandlePunchingAnim(false);
+            enemView.HandlePunchingAnim(true);
+            StartCoroutine(WaitForAnimEnd());
             attackTimer = 0;
         }
+    }
+
+    IEnumerator WaitForAnimEnd()
+    {
+        yield return new WaitForSeconds(1f);
+        enemView.HandlePunchingAnim(false);
     }
     #endregion
 }
