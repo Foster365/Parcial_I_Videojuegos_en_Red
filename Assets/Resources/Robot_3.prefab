@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7126173365232328279}
   - component: {fileID: 2204051851633316325}
+  - component: {fileID: 2717257889281678196}
   m_Layer: 0
   m_Name: Left_Hand_Collider
   m_TagString: Untagged
@@ -44,6 +45,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 45.019196, y: 60.577526, z: 40.619743}
   m_Center: {x: -1.1548625, y: 2.5349026, z: -0.12077097}
+--- !u!114 &2717257889281678196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846593088504125479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3cf40dd30dcf84db5f9d70b95a887b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackColliderDamage: 2
+  targetTag: Player
 --- !u!1 &2709979888420496779
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,5 +1122,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa3cf40dd30dcf84db5f9d70b95a887b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackColliderDamage: 0
-  targetTag: 
+  attackColliderDamage: 3
+  targetTag: Player

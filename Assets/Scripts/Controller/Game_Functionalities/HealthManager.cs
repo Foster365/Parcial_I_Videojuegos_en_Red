@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HealthManager : MonoBehaviourPun // TODO # Note: Este script no debe destruirse (if(!photonView.IsMine) Destroy(this)), porque es utilizado por otro photonView para acceder a sus métodos y ejecutar sus rpc's (Cuando colisiono llamo a su TakeDamage())
 {
@@ -79,7 +80,13 @@ public class HealthManager : MonoBehaviourPun // TODO # Note: Este script no deb
     {
         //charView.HandleDeathAnim(true);
         StartCoroutine(WaitUntiDeactivateAnim());
-        PhotonNetwork.Destroy(gameObject);
+        if (gameObject.tag == TagManager.PLAYER_TAG)
+        {
+            PhotonNetwork.Destroy(gameObject);
+            SceneManager.LoadScene("Game_Over");
+            PhotonNetwork.Disconnect();
+        }
+        else PhotonNetwork.Destroy(gameObject);
     }
 
     IEnumerator WaitUntiDeactivateAnim()

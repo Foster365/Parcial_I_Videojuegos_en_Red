@@ -19,6 +19,7 @@ public class Bullet : MonoBehaviourPun
             Debug.Log("BUENAS!");
             if (other.tag == targetTag)
             {
+                Debug.Log("Es: " + targetTag);
                 var healthComponent = other.GetComponent<HealthManager>();
                 if (healthComponent != null)
                 {
@@ -40,17 +41,9 @@ public class Bullet : MonoBehaviourPun
         }
     }
 
-    [PunRPC]
-    void DestroyEnemy()
-    {
-
-        PhotonNetwork.Destroy(gameObject);
-    }
-
-    //[PunRPC]
     void DestroyBullet()
     {
-        PhotonNetwork.Destroy(this.gameObject);
+        PhotonNetwork.Destroy(gameObject);
     }
 
     void Rotate()

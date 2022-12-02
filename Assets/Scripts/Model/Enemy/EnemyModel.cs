@@ -60,7 +60,6 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
         //if (!_isInCooldown)
         //{
         target = _target;
-        Debug.Log("Target: " + target);
         photonView.RPC("UpdateTarget", RpcTarget.Others, target.photonView.ViewID);
         //}
     }
@@ -68,7 +67,8 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     {
         //if (photonView.IsMine)
         //{
-        CharacterModel[] characters = FindObjectsOfType<CharacterModel>();
+        GameObject[] characters = GameObject.FindGameObjectsWithTag(TagManager.PLAYER_TAG);//FindObjectsOfType<CharacterModel>();
+        Debug.Log("Characters length is: " + characters.Length);
         if (characters.Length > 0)
         {
             List<CharacterModel> list = new List<CharacterModel>();
@@ -76,7 +76,8 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
             {
                 if (characters[i] != target)
                 {
-                    list.Add(characters[i]);
+
+                    list.Add(characters[i].gameObject.GetComponent<CharacterModel>());
                 }
             }
             int index = Random.Range(0, list.Count - 1);
@@ -102,7 +103,6 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
         canMove = true;
         if (canMove)
         {
-            enemView.HandleRunAnim(true);:
             Move(dir.normalized);
             LookDir(dir);
         }
@@ -125,6 +125,7 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     public void AttackCharacter()
     {
         canMove = false;
+
         if (isDistanceEnemy) HandleShooting();
         else HandleMeleeAttack();
     }
