@@ -653,7 +653,7 @@ MonoBehaviour:
   attackRange: 5
   maxAttackTimer: 2
   firePoint: {fileID: 6510719232768802660}
-  bulletForce: 20
+  bulletForce: 10
 --- !u!114 &8023111081639208916
 MonoBehaviour:
   m_ObjectHideFlags: 0

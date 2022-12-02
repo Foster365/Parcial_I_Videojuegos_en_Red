@@ -65,21 +65,21 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     }
     public void SetRandomTarget()
     {
-        //if (photonView.IsMine)
-        //{
-        GameObject[] characters = GameObject.FindGameObjectsWithTag(TagManager.PLAYER_TAG);//FindObjectsOfType<CharacterModel>();
-        Debug.Log("Characters length is: " + characters.Length);
-        if (characters.Length > 0)
+        if (photonView.IsMine)
         {
-            List<CharacterModel> list = new List<CharacterModel>();
-            for (int i = 0; i < characters.Length; i++)
+            GameObject[] characters = GameObject.FindGameObjectsWithTag(TagManager.PLAYER_TAG);//FindObjectsOfType<CharacterModel>();
+            Debug.Log("Characters length is: " + characters.Length);
+            if (characters.Length > 0)
             {
-                list.Add(characters[i].gameObject.GetComponent<CharacterModel>());
+                List<CharacterModel> list = new List<CharacterModel>();
+                for (int i = 0; i < characters.Length; i++)
+                {
+                    list.Add(characters[i].gameObject.GetComponent<CharacterModel>());
+                }
+                int index = Random.Range(0, list.Count);
+                SetTarget(list[index]);
             }
-            int index = Random.Range(0, list.Count);
-            SetTarget(list[index]);
         }
-        //}
     }
     [PunRPC]
     public void UpdateTarget(int id)

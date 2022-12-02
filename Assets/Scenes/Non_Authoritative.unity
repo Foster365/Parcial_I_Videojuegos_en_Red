@@ -866,7 +866,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.1
+  m_fontSize: 31
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1784,6 +1784,18 @@ MonoBehaviour:
     numbOfEnemies: 2
     typeOfEnemies:
     - Robot_1
+    spawnInterval: 0.5
+  - waveName: Enemies 3
+    numbOfEnemies: 4
+    typeOfEnemies:
+    - Robot_1
+    - Robot_3
+    spawnInterval: 0.5
+  - waveName: Enemies 4
+    numbOfEnemies: 4
+    typeOfEnemies:
+    - Robot_1
+    - Robot_3
     spawnInterval: 1
   spawnPoints:
   - {fileID: 2010215302}

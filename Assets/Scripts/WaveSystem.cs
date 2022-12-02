@@ -47,25 +47,26 @@ public class WaveSystem : MonoBehaviourPun
 
     private void Update()
     {
-        if (PhotonNetwork.IsMasterClient) UpdateWave();
+        if (photonView.IsMine) UpdateWave();
     }
 
     public void UpdateWave()
     {
-        if (PhotonNetwork.IsMasterClient && gameMgr.IsGameOn)
+        if (photonView.IsMine && gameMgr.IsGameOn)
         {
 
             Debug.Log("Curr wave index value: " + currentWaveNumber);
             Debug.Log("waves length: " + (waves.Length - 1));
             currentWave = waves[currentWaveNumber];
-            SpawnWave();
+            if (canSpawn) SpawnWave();
             GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
-            if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length)
+            Debug.Log("Current wave? " + currentWave);
+            if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length - 1)
             {
                 currentWaveNumber++;
                 canSpawn = true;
                 photonView.RPC("SetWaveUI", RpcTarget.All, currentWaveNumber.ToString());
-                if (currentWaveNumber == waves.Length)
+                if (currentWaveNumber == 3)
                 {
                     isWavesCompleted = true;
                     photonView.RPC("LoadWinScene", RpcTarget.All);
@@ -102,24 +103,24 @@ public class WaveSystem : MonoBehaviourPun
 
     void SpawnWave()
     {
-        //if (PhotonNetwork.IsMasterClient)
-        //{
-        Debug.Log("Start Wave");
-        if (canSpawn && nextSpawnTime < Time.time)
+        if (photonView.IsMine)
         {
-            string randomEnemy = currentWave.typeOfEnemies[Random.Range(0, currentWave.typeOfEnemies.Length)];
-            Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            GameObject enemyGO = PhotonNetwork.Instantiate(randomEnemy, randomPoint.position, Quaternion.identity);
-            currentWave.numbOfEnemies--;
-            EnemyModel eModel = enemyGO.gameObject.GetComponent<EnemyModel>();
-            eModel.SetRandomTarget();
-            nextSpawnTime = Time.time + currentWave.spawnInterval;
-            if (currentWave.numbOfEnemies == 0)
+            Debug.Log("Start Wave");
+            if (canSpawn && nextSpawnTime < Time.time)
             {
-                canSpawn = false;
+                string randomEnemy = currentWave.typeOfEnemies[Random.Range(0, currentWave.typeOfEnemies.Length)];
+                Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                GameObject enemyGO = PhotonNetwork.Instantiate(randomEnemy, randomPoint.position, Quaternion.identity);
+                currentWave.numbOfEnemies--;
+                EnemyModel eModel = enemyGO.gameObject.GetComponent<EnemyModel>();
+                eModel.SetRandomTarget();
+                nextSpawnTime = Time.time + currentWave.spawnInterval;
+                if (currentWave.numbOfEnemies == 0)
+                {
+                    canSpawn = false;
+                }
             }
         }
-        //}
 
     }
 }
