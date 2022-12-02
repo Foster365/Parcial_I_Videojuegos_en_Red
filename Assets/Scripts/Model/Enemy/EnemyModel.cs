@@ -4,144 +4,169 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógica en este script con la nueva lógica de los enemies.
 {
+
+    [Header("Basic Variables")]
+    [SerializeField] bool isDistanceEnemy;
+
+    [Header("Movement Variables")]
+    [SerializeField] float movementSpeed;
+    [SerializeField] float rotSpeed;
+
+    [Header("Attack Variables")]
+    [SerializeField] float attackRange;
+    [SerializeField] float maxAttackTimer;
+    [SerializeField] Transform firePoint;
+
+    float attackTimer;
+    bool canMove;
+    public float bulletForce;
+
+    Rigidbody rb;
     HealthManager healthMgr;
-
-    public NavMeshAgent agent;
-    public Transform targetTransform;
-    public LayerMask whatIsGroundLayermask, whatIsPlayerLayermask;
-    public int health;
     Animator anim;
+    EnemyView enemView;
 
-    public CharacterModel[] characters;
-    CharacterModel characterTarget;
-    int targetIndex;
-    bool isTargetIndexSet = false;
-
-
-    public float sightRange, attackRange;
-
-    //patrol
-    public Vector3 walkPoint;
-    bool walkPointSet;
-    public float walkPointRange;
-
-    //attacking
-    public float timeBetweenAttacks;
-    bool alreadyAttacked;
+    CharacterModel target;
 
     public HealthManager HealthMgr { get => healthMgr; set => healthMgr = value; }
+    public CharacterModel Target { get => target; set => target = value; }
+    public float AttackRange { get => attackRange; }
+    public bool CanMove { get => canMove; set => canMove = value; }
 
     // Start is called before the first frame update
     void Awake()
     {
         if (!photonView.IsMine) Destroy(this);
+        rb = GetComponent<Rigidbody>();
         healthMgr = GetComponent<HealthManager>();
+        anim = GetComponent<Animator>();
+        enemView = GetComponent<EnemyView>();
     }
 
     private void Start()
     {
-        characters = FindObjectsOfType<CharacterModel>();
+        canMove = false;
+        attackTimer = 0;
+        bulletForce = 20f;
     }
 
-    #region Enemy_Decision_Tree_Questions
-
-    public bool IsPlayerInSightRange()
+    #region Targetting_Methods
+    public void SetTarget(CharacterModel _target)
     {
+        //if (!_isInCooldown)
+        //{
+        target = _target;
+        Debug.Log("Target: " + target);
+        photonView.RPC("UpdateTarget", RpcTarget.Others, target.photonView.ViewID);
+        //}
+    }
+    public void SetRandomTarget()
+    {
+        //if (photonView.IsMine)
+        //{
+        CharacterModel[] characters = FindObjectsOfType<CharacterModel>();
+        if (characters.Length > 0)
+        {
+            List<CharacterModel> list = new List<CharacterModel>();
+            for (int i = 0; i < characters.Length; i++)
+            {
+                if (characters[i] != target)
+                {
+                    list.Add(characters[i]);
+                }
+            }
+            int index = Random.Range(0, list.Count - 1);
+            SetTarget(list[index]);
+        }
+        //}
+    }
+    [PunRPC]
+    public void UpdateTarget(int id)
+    {
+        PhotonView view = PhotonView.Find(id);
+        if (view != null)
+        {
+            target = view.gameObject.GetComponent<CharacterModel>();
+        }
+    }
+    #endregion
 
-        //player in sight/range
-        bool playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayerLayermask);
-        return playerInSightRange;
-
+    #region Seeking_Methods
+    public void SeekCharacter()
+    {
+        Vector3 dir = target.transform.position - transform.position;
+        canMove = true;
+        if (canMove)
+        {
+            Move(dir.normalized);
+            LookDir(dir);
+        }
     }
 
-    public bool IsPlayerInAttackRange()
+    public void Move(Vector3 dir)
     {
-
-        bool playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayerLayermask);
-        return playerInAttackRange;
-
+        dir *= movementSpeed;
+        dir.y = rb.velocity.y;
+        rb.velocity = dir;
     }
 
     #endregion
-    #region Enemy_Decision_Tree_Actions
-    public void SearchWalkPoint()
+
+    public void LookDir(Vector3 dir)
     {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGroundLayermask))
-            walkPointSet = true;
+        transform.forward = Vector3.Lerp(transform.forward, dir, rotSpeed * Time.deltaTime);
     }
 
-    public void Patrolling()
+    public void AttackCharacter()
     {
-        if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
-
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-
-        //walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1f)
-            walkPointSet = false;
+        canMove = false;
+        if (isDistanceEnemy) HandleShooting();
+        else HandleMeleeAttack();
     }
 
-    public void ChasePlayer()
+    #region Distance_Attack_Methods
+    public void HandleShooting()
     {
-
-        if (photonView.IsMine && characters.Length >= 1)
+        attackTimer += Time.deltaTime;
+        if (attackTimer >= maxAttackTimer)
         {
-            agent.SetDestination(characters[targetIndex].transform.position);
+            Shoot();
+            attackTimer = 0;
+            enemView.HandleShootAnim(false);
         }
-
     }
 
     [PunRPC]
-    void RequestTargetIndex(Player client)
+    void Shoot()
     {
 
-        /*int index = Random.Range(0, characters.Length-1);*/
-        if (characters == null) Debug.Log("Characters es null");
-        //characterTarget = characters[index];
-        photonView.RPC("SetEnemyTargetIndex", client, UnityEngine.Random.Range(0, characters.Length));
-
+        enemView.HandleShootAnim(true);
+        GameObject bullet = PhotonNetwork.Instantiate("EnemyBullet", firePoint.position, firePoint.rotation);
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
+        rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
+        //StartCoroutine(WaitToDisableAnim());
     }
 
-    void SetEnemyTargetIndex(int _index)
+    public IEnumerator WaitToDisableAnim()
     {
-        targetIndex = _index;
-        //agent.SetDestination(_target.transform.position);
+        yield return new WaitForSeconds(.5f);
     }
-
-    public void AttackPlayer()
-    {
-        if (characters.Length >= 1)
-        {
-            //enemy does not move
-            agent.SetDestination(characters[targetIndex].transform.position);
-
-            transform.LookAt(characters[targetIndex].transform);
-
-            if (!alreadyAttacked)
-            {
-                anim.SetBool("Attack", true);
-                alreadyAttacked = true;
-                Invoke(nameof(ResetAttack), timeBetweenAttacks);
-            }
-        }
-    }
-    void ResetAttack()
-    {
-        alreadyAttacked = false;
-    }
-
     #endregion
 
-
+    #region Melee_Attack_Methods
+    public void HandleMeleeAttack()
+    {
+        enemView.HandlePunchingAnim(true);
+        attackTimer += Time.deltaTime;
+        if (attackTimer >= maxAttackTimer)
+        {
+            enemView.HandlePunchingAnim(false);
+            attackTimer = 0;
+        }
+    }
+    #endregion
 }

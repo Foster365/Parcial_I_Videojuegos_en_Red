@@ -2112,8 +2112,8 @@ GameObject:
   - component: {fileID: 5617743288086785966}
   - component: {fileID: 5617743288086785967}
   - component: {fileID: 5617743288086785971}
-  - component: {fileID: 5617743288086785965}
   - component: {fileID: 5617743288086785972}
+  - component: {fileID: 5617743288086785965}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -2158,7 +2158,7 @@ MonoBehaviour:
     - Robot_3
     spawnInterval: 0.5
   - waveName: Enemies 3
-    numbOfEnemies: 5
+    numbOfEnemies: 2
     typeOfEnemies:
     - Robot_1
     - Robot_3
@@ -2166,5 +2166,6 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 2010215302}
   - {fileID: 836292782}
+  maxWaves: 3
   waveNumber: {fileID: 1140280370}
   canSpawn: 1

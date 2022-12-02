@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     //
 
     bool isGameOn = false, isVictory = false, isDefeat = false;
-
+    WaveSystem waveSystem;
     [SerializeField]
     bool isAllWavesCompleted = false;
 
@@ -33,21 +33,25 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         if (GameManagerInstance != null && GameManagerInstance != this) Destroy(this);
-        else GameManagerInstance = this;
+        else
+        {
+            GameManagerInstance = this;
+            waveSystem = GetComponent<WaveSystem>();
+        }
     }
     private void Start()
     {
-        Debug.Log("Max players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
+        //Debug.Log("Max players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
         gameTimer.enabled = false;
         isGameOn = false;
         gameTimer.text = timeLeft.ToString();
-        if (PhotonNetwork.PlayerList.Length > 1) photonView.RPC("StartGame", RpcTarget.All, true);
+        if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.MaxPlayers) photonView.RPC("StartGame", RpcTarget.All, true);
         else if (PhotonNetwork.IsMasterClient)
         {
             //TESTING ONLY
-            float timer = 0;
-            timer += Time.deltaTime;
-            if (timer >= timeToSync) isAllWavesCompleted = true;
+            //float timer = 0;
+            //timer += Time.deltaTime;
+            //if (timer >= timeToSync) isAllWavesCompleted = true;
             //
         }
     }
@@ -61,6 +65,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("I'm Master Client");
+                waveSystem.UpdateWave();
                 WaitToSync();
                 CheckWin();
                 CheckDefeat();
@@ -101,7 +106,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("Waiting to sync timer");
 
         syncTimer += Time.deltaTime;
-        Debug.Log("timer: " + syncTimer);
+        //Debug.Log("timer: " + syncTimer);
         if (syncTimer >= timeToSync)
         {
             Debug.Log("Syncing timer");

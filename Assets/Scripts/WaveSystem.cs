@@ -22,6 +22,7 @@ public class WaveSystem : MonoBehaviourPun
     private Wave currentWave;
     private int currentWaveNumber;
     private float nextSpawnTime;
+    [SerializeField] int maxWaves;
     public TextMeshProUGUI waveNumber;
 
     public bool canSpawn = true;
@@ -33,26 +34,26 @@ public class WaveSystem : MonoBehaviourPun
         waveNumber.text = currentWaveNumber.ToString();
     }
 
-    private void Update()
+    public void UpdateWave()
     {
 
-        if (photonView.IsMine)
+        //if (photonView.IsMine)
+        //{
+        Debug.Log("Curr wave index value: " + currentWaveNumber);
+        Debug.Log("waves length: " + (waves.Length - 1));
+        currentWave = waves[currentWaveNumber];
+        SpawnWave();
+        GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length)
         {
-            Debug.Log("Curr wave index value: " + currentWaveNumber);
-            Debug.Log("waves length: " + (waves.Length - 1));
-            currentWave = waves[currentWaveNumber];
-            SpawnWave();
-            GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
-            if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber+1 != waves.Length)
+            currentWaveNumber++;
+            canSpawn = true;
+            if (currentWaveNumber == waves.Length)
             {
-                currentWaveNumber++;
-                canSpawn = true;
-                if(currentWaveNumber == 2)
-                {
-                    Debug.Log("win");
-                }
+                PhotonNetwork.LoadLevel("Win"); // TODO # Note: Setear bool o condición para rpc win a todos desde el game mgr.
             }
         }
+        //}
     }
 
     [PunRPC]
@@ -63,22 +64,25 @@ public class WaveSystem : MonoBehaviourPun
 
     void SpawnWave()
     {
-        if (photonView.IsMine)
+        //if (photonView.IsMine)
+        //{
+        Debug.Log("Start Wave");
+        if (canSpawn && nextSpawnTime < Time.time)
         {
-            Debug.Log("Start Wave");
-            if (canSpawn && nextSpawnTime < Time.time)
+            string randomEnemy = currentWave.typeOfEnemies[Random.Range(0, currentWave.typeOfEnemies.Length)];
+            Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            GameObject enemyGO = PhotonNetwork.Instantiate(randomEnemy, randomPoint.position, Quaternion.identity);
+            currentWave.numbOfEnemies--;
+            EnemyModel eModel = enemyGO.gameObject.GetComponent<EnemyModel>();
+            Debug.Log("Enemy owner: " + enemyGO.GetPhotonView().Owner);
+            eModel.SetRandomTarget();
+            nextSpawnTime = Time.time + currentWave.spawnInterval;
+            if (currentWave.numbOfEnemies == 0)
             {
-                string randomEnemy = currentWave.typeOfEnemies[Random.Range(0, currentWave.typeOfEnemies.Length)];
-                Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-                PhotonNetwork.Instantiate(randomEnemy, randomPoint.position, Quaternion.identity);
-                currentWave.numbOfEnemies--;
-                nextSpawnTime = Time.time + currentWave.spawnInterval;
-                if (currentWave.numbOfEnemies == 0)
-                {
-                    canSpawn = false;
-                }
+                canSpawn = false;
             }
         }
+        //}
 
     }
 }

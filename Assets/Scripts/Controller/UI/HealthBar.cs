@@ -45,7 +45,7 @@ public class HealthBar : MonoBehaviourPun
                 elapsed += Time.deltaTime;
                 uiFillAmount = Mathf.Lerp(preChangePct, pct, elapsed / updateSpeed);
                 healthImage.fillAmount = uiFillAmount;
-                StartCoroutine(WaitToCheckUIFill(uiFillAmount));
+                //StartCoroutine(WaitToCheckUIFill(uiFillAmount));
                 yield return null;
             }
 
@@ -59,7 +59,7 @@ public class HealthBar : MonoBehaviourPun
     {
         yield return new WaitForSeconds(2f);
 
-        photonView.RPC("CheckUIFill", RpcTarget.All, _fillAmount);
+        //photonView.RPC("CheckUIFill", RpcTarget.All, _fillAmount);
     }
 
     [PunRPC]

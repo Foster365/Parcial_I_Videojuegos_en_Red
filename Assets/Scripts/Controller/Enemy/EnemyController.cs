@@ -10,35 +10,22 @@ public class EnemyController : MonoBehaviourPun // TODO # Note: Se modificará la
 
     EnemyModel enemyModel;
 
-    //states
-    public bool playerInSightRange, playerInAttackRange;
-
     private void Awake()
     {
-        if (!photonView.IsMine) Destroy(this);
-        enemyModel = GetComponent<EnemyModel>();
+        if (photonView.IsMine)
+        {
+            enemyModel = GetComponent<EnemyModel>();
+        }
     }
 
     private void Update()
     {
-        if (enemyModel.characters != null)
+        if (photonView.IsMine && enemyModel.Target != null)
         {
-
-            if (!enemyModel.IsPlayerInSightRange() && !enemyModel.IsPlayerInAttackRange()) enemyModel.Patrolling();
-            if (enemyModel.IsPlayerInSightRange() && !enemyModel.IsPlayerInAttackRange()) enemyModel.ChasePlayer();
-            if (enemyModel.IsPlayerInAttackRange() && enemyModel.IsPlayerInSightRange()) enemyModel.AttackPlayer();
-
+            if (Vector3.Distance(transform.position, enemyModel.Target.transform.position) > enemyModel.AttackRange)
+                enemyModel.SeekCharacter();
+            else enemyModel.AttackCharacter();
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        if (photonView.IsMine)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, enemyModel.attackRange);
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, enemyModel.sightRange);
-        }
-    }
 }

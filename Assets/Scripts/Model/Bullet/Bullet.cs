@@ -16,7 +16,7 @@ public class Bullet : MonoBehaviourPun
     {
         if (photonView.IsMine)
         {
-
+            Debug.Log("BUENAS!");
             if (other.tag == targetTag)
             {
                 var healthComponent = other.GetComponent<HealthManager>();
