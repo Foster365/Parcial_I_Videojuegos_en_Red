@@ -27,33 +27,47 @@ public class WaveSystem : MonoBehaviourPun
 
     public bool canSpawn = true;
 
+    GameManager gameMgr;
+
+    private void Awake()
+    {
+        gameMgr = GetComponent<GameManager>();
+    }
 
     private void Start()
     {
         currentWaveNumber = 0;
         waveNumber.text = currentWaveNumber.ToString();
+
+    }
+
+    private void Update()
+    {
+        if (photonView.IsMine) UpdateWave();
     }
 
     public void UpdateWave()
     {
-
-        //if (photonView.IsMine)
-        //{
-        Debug.Log("Curr wave index value: " + currentWaveNumber);
-        Debug.Log("waves length: " + (waves.Length - 1));
-        currentWave = waves[currentWaveNumber];
-        SpawnWave();
-        GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
-        if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length)
+        if (photonView.IsMine && gameMgr.IsGameOn)
         {
-            currentWaveNumber++;
-            canSpawn = true;
-            if (currentWaveNumber == waves.Length)
+
+            Debug.Log("Curr wave index value: " + currentWaveNumber);
+            Debug.Log("waves length: " + (waves.Length - 1));
+            currentWave = waves[currentWaveNumber];
+            SpawnWave();
+            GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+            if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber + 1 != waves.Length)
             {
-                PhotonNetwork.LoadLevel("Win"); // TODO # Note: Setear bool o condición para rpc win a todos desde el game mgr.
+                currentWaveNumber++;
+                canSpawn = true;
+                photonView.RPC("SetWaveUI", RpcTarget.All);
+                if (currentWaveNumber == waves.Length)
+                {
+                    PhotonNetwork.LoadLevel("Win"); // TODO # Note: Setear bool o condición para rpc win a todos desde el game mgr.
+                }
             }
         }
-        //}
+
     }
 
     [PunRPC]

@@ -32,10 +32,11 @@ public class Bullet : MonoBehaviourPun
                         Debug.Log("Target health: " + healthComponent.CurrentHealth);
                     }
                 }
-                photonView.RPC("DestroyBullet", photonView.Owner);
+                //photonView.RPC("DestroyBullet", photonView.Owner);
+                DestroyBullet();
             }
-            else photonView.RPC("DestroyBullet", photonView.Owner);
-
+            //else photonView.RPC("DestroyBullet", photonView.Owner);
+            else DestroyBullet();
         }
     }
 
@@ -46,7 +47,7 @@ public class Bullet : MonoBehaviourPun
         PhotonNetwork.Destroy(gameObject);
     }
 
-    [PunRPC]
+    //[PunRPC]
     void DestroyBullet()
     {
         PhotonNetwork.Destroy(this.gameObject);

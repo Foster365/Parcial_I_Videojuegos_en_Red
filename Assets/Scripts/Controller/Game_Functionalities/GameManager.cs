@@ -12,6 +12,7 @@ using static LevelsManager;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     LevelsManager levelManager;
+    Character_Instantiator charInstantiator;
     WaveSpawner waveSpawner;
 
     //Game timer variables
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     #region Singleton
 
     public GameManager GameManagerInstance { get; private set; }
+    public bool IsGameOn { get => isGameOn; set => isGameOn = value; }
 
     #endregion;
 
@@ -37,11 +39,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             GameManagerInstance = this;
             waveSystem = GetComponent<WaveSystem>();
+            charInstantiator = GetComponent<Character_Instantiator>();
         }
     }
     private void Start()
     {
         //Debug.Log("Max players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
+        //charInstantiator.HandlePlayerInstantiation();
         gameTimer.enabled = false;
         isGameOn = false;
         gameTimer.text = timeLeft.ToString();
@@ -61,11 +65,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (isGameOn)
         {
             UpdateGameTimer();
-            waveSystem.UpdateWave();
             //CheckPlayerDisconnected();
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log("I'm Master Client");
+                CharacterModel[] charModels = GameObject.FindObjectsOfType<CharacterModel>();
+                Debug.Log("Char models" + charModels.Length);
+                //waveSystem.UpdateWave();
+                //if (isNextWave)
                 WaitToSync();
                 CheckWin();
                 CheckDefeat();

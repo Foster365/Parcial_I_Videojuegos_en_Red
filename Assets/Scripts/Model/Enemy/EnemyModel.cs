@@ -102,6 +102,7 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
         canMove = true;
         if (canMove)
         {
+            enemView.HandleRunAnim(true);:
             Move(dir.normalized);
             LookDir(dir);
         }
@@ -131,12 +132,15 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     #region Distance_Attack_Methods
     public void HandleShooting()
     {
+        Vector3 dir = target.transform.position - transform.position;
+        LookDir(dir);
         attackTimer += Time.deltaTime;
         if (attackTimer >= maxAttackTimer)
         {
+            LookDir(dir);
             Shoot();
             attackTimer = 0;
-            enemView.HandleShootAnim(false);
+            //enemView.HandleShootAnim(false);
         }
     }
 
@@ -144,7 +148,7 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     void Shoot()
     {
 
-        enemView.HandleShootAnim(true);
+        //enemView.HandleShootAnim(true);
         GameObject bullet = PhotonNetwork.Instantiate("EnemyBullet", firePoint.position, firePoint.rotation);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
