@@ -2157,7 +2157,7 @@ MonoBehaviour:
     typeOfEnemies:
     - Enemy_Simple_1
     spawnInterval: 0.5
-  - waveName: Enemies 3
+  - waveName: Win Wave
     numbOfEnemies: 5
     typeOfEnemies:
     - Enemy_Simple_1
