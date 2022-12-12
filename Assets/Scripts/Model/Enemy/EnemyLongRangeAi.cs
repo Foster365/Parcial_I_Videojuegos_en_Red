@@ -8,7 +8,6 @@ using UnityEngine.AI;
 public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará este script cuando se migre la nueva lógica de los enemies.
 {
     public NavMeshAgent agent;
-    public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public int health;
     Animator anim;
@@ -16,6 +15,7 @@ public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará es
     public int bulletForce;
 
     CharacterModel[] characters;
+    public GameObject player;
     CharacterModel characterTarget;
     int targetIndex;
     bool isTargetIndexSet = false;
@@ -27,7 +27,6 @@ public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará es
 
     //attacking
     public float timeBetweenAttacks;
-    bool alreadyAttacked;
 
     //states
     public float sightRange, attackRange;
@@ -35,21 +34,24 @@ public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará es
 
     private void Awake()
     {
-        if (photonView.IsMine)
-        {
-            player = GameObject.FindWithTag("Player").transform;
+        //if (photonView.IsMine)
+        //{
             agent = GetComponent<NavMeshAgent>();
             anim = GetComponent<Animator>();
-        }
+            
+        //}
     }
 
     private void Start()
     {
         characters = FindObjectsOfType<CharacterModel>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<GameObject>();
+
     }
 
     private void Update()
     {
+        Debug.Log("player name: " + player);
         if (characters != null)
         {
             Debug.Log("CHARACTERS COUNT: " + characters.Length);
@@ -57,9 +59,13 @@ public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará es
             playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
             playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-            if (!playerInSightRange && !playerInAttackRange) Patrolling();
-            if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-            if (playerInAttackRange && playerInSightRange) AttackPlayer();
+            //if (!playerInSightRange && !playerInAttackRange) Patrolling();
+            //if (playerInSightRange && !playerInAttackRange) ChasePlayer();
+            if (playerInAttackRange && playerInSightRange)
+            {
+                AttackPlayer();
+            } 
+
 
         }
     }
@@ -112,34 +118,22 @@ public class EnemyLongRangeAi : MonoBehaviourPun // TODO # Note: Se eliminará es
 
     private void AttackPlayer()
     {
-        if (characters.Length >= 1)
-        {
+        //if (characters.Length >= 1)
+        //{
             //enemy does not move
-            agent.SetDestination(characters[targetIndex].transform.position);
+            agent.SetDestination(player.transform.position);
 
             transform.LookAt(characters[targetIndex].transform);
-
-            if (!alreadyAttacked)
-            {
-                photonView.RPC("Shoot", PhotonNetwork.LocalPlayer);
-
-
-                alreadyAttacked = true;
-                Invoke(nameof(ResetAttack), timeBetweenAttacks);
-            }
-        }
+            Debug.Log("attempted to attack");
+            Shoot();
+        //}
     }
-    [PunRPC]
     void Shoot()
     {
+        Debug.Log("shoot");
         GameObject bullet = PhotonNetwork.Instantiate("BananaBulletEnemy", firePoint.position, firePoint.rotation);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
-    }
-
-    private void ResetAttack()
-    {
-        alreadyAttacked = false;
     }
 
     private void OnDrawGizmosSelected()
