@@ -105,7 +105,7 @@ public class WaveSystem : MonoBehaviourPun
         //if (PhotonNetwork.IsMasterClient)
         //{
         Debug.Log("Start Wave");
-        if (canSpawn && nextSpawnTime < Time.time)
+        if (currentWave.numbOfEnemies > 0 && nextSpawnTime < Time.time && canSpawn)
         {
             string randomEnemy = currentWave.typeOfEnemies[Random.Range(0, currentWave.typeOfEnemies.Length)];
             Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];

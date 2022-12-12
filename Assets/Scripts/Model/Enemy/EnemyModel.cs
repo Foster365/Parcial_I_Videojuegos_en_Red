@@ -57,11 +57,11 @@ public class EnemyModel : MonoBehaviourPun // TODO # Note: Se modificará la lógi
     #region Targetting_Methods
     public void SetTarget(CharacterModel _target)
     {
-        //if (!_isInCooldown)
-        //{
+        if (photonView.IsMine)
+        {
         target = _target;
-        photonView.RPC("UpdateTarget", RpcTarget.Others, target.photonView.ViewID);
-        //}
+        photonView.RPC("UpdateTarget", RpcTarget.Others, _target.photonView.ViewID);
+        }
     }
     public void SetRandomTarget()
     {

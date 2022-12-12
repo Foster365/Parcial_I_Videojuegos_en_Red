@@ -18,10 +18,12 @@ public class HealthBar : MonoBehaviourPun
     private void Awake()
     {
         if (!photonView.IsMine) Destroy(this);
-
-        healthImage.enabled = true;
-        gameObject.SetActive(true);
-        GetComponentInParent<HealthManager>().OnHealthPercentHasChanged += HandleHealthChanged;
+        if (photonView.IsMine)
+        {
+            healthImage.enabled = true;
+            gameObject.SetActive(true);
+            GetComponentInParent<HealthManager>().OnHealthPercentHasChanged += HandleHealthChanged;
+        }  
     }
 
     private void HandleHealthChanged(float pct)
